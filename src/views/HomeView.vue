@@ -99,7 +99,7 @@ onBeforeUnmount(() => {
       </figure>
     </section>
 
-    <section class="about-section reveal reveal-up" aria-labelledby="about-title">
+    <section class="about-section reveal reveal-up" id="about" aria-labelledby="about-title">
       <figure class="about-image">
         <img :src="image7" alt="Fireband live performance atmosphere" />
       </figure>

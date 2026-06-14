@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { RouterLink } from 'vue-router'
 import logo from "@/assets/images/logo.png"
 defineProps<{
   theme: 'dark' | 'light'
@@ -11,7 +12,7 @@ defineEmits<{
 
 <template>
   <header class="site-header">
-    <a class="brand" href="#home" aria-label="Fireband home">
+    <RouterLink class="brand" to="/" aria-label="Fireband home">
       <span class="brand-mark">
         <img :src="logo" alt="" />
       </span>
@@ -19,24 +20,24 @@ defineEmits<{
         <strong>Fireband</strong>
         <small>Live music collective</small>
       </span>
-    </a>
+    </RouterLink>
 
     <nav class="nav-links" aria-label="Main navigation">
       <a href="#about">About</a>
       <a href="#shows">Shows</a>
       <div class="nav-menu">
-        <a class="nav-menu-trigger" href="#music" aria-haspopup="true">
+        <button class="nav-menu-trigger" type="button" href="#music" aria-haspopup="true">
           Music
           <span aria-hidden="true">v</span>
-        </a>
+        </button>
         <div class="nav-dropdown" aria-label="Music event types">
-          <a href="#music">Weddings</a>
-          <a href="#music">Parties</a>
-          <a href="#music">Private evenings</a>
+          <RouterLink class="dropdown-link" :to="{ path: '/', hash: '#music' }">Weddings</RouterLink>
+          <RouterLink class="dropdown-link" :to="{ path: '/', hash: '#music' }">Parties</RouterLink>
+          <RouterLink class="dropdown-link" :to="{ path: '/', hash: '#music' }">Private evenings</RouterLink>
         </div>
       </div>
       <a href="#team">Band</a>
-      <a href="#booking">Booking</a>
+      <RouterLink class="nav-link nav-primary" to="/pricing">Booking</RouterLink>
     </nav>
 
     <button
@@ -81,8 +82,8 @@ defineEmits<{
 .brand-mark {
   display: grid;
   place-items: center;
-  width: 42px;
-  height: 42px;
+  width: 70px;
+  height: 70px;
   border-radius: 8px;
   background:
     linear-gradient(135deg, #ff3d00, #ffb000 54%, #02d0ff);

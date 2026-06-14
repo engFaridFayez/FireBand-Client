@@ -3,33 +3,33 @@ import { RouterView } from 'vue-router';
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import harlem from '@/assets/audio/Harlem.mp3'
 
-// const audioRef = ref<HTMLAudioElement | null>(null)
+const audioRef = ref<HTMLAudioElement | null>(null)
 
-// const playAudio = async () => {
-//   const audio = audioRef.value
+const playAudio = async () => {
+  const audio = audioRef.value
 
-//   if (!audio) return
+  if (!audio) return
 
-//   audio.muted = false
-//   audio.volume = 1
+  audio.muted = false
+  audio.volume = 1
 
-//   try {
-//     await audio.play()
-//   } catch {
-//     window.addEventListener('click', playAudio, { once: true })
-//     window.addEventListener('keydown', playAudio, { once: true })
-//   }
-// }
+  try {
+    await audio.play()
+  } catch {
+    window.addEventListener('click', playAudio, { once: true })
+    window.addEventListener('keydown', playAudio, { once: true })
+  }
+}
 
-// onMounted(() => {
-//   playAudio()
-// })
+onMounted(() => {
+  playAudio()
+})
 
-// onBeforeUnmount(() => {
-//   window.removeEventListener('click', playAudio)
-//   window.removeEventListener('keydown', playAudio)
-// })
-// </script>
+onBeforeUnmount(() => {
+  window.removeEventListener('click', playAudio)
+  window.removeEventListener('keydown', playAudio)
+})
+</script>
 
 <template>
   <audio ref="audioRef" hidden autoplay loop :muted="false">
