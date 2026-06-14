@@ -22,8 +22,19 @@ defineEmits<{
     </a>
 
     <nav class="nav-links" aria-label="Main navigation">
+      <a href="#about">About</a>
       <a href="#shows">Shows</a>
-      <a href="#music">Music</a>
+      <div class="nav-menu">
+        <a class="nav-menu-trigger" href="#music" aria-haspopup="true">
+          Music
+          <span aria-hidden="true">v</span>
+        </a>
+        <div class="nav-dropdown" aria-label="Music event types">
+          <a href="#music">Weddings</a>
+          <a href="#music">Parties</a>
+          <a href="#music">Private evenings</a>
+        </div>
+      </div>
       <a href="#team">Band</a>
       <a href="#booking">Booking</a>
     </nav>
@@ -127,6 +138,54 @@ defineEmits<{
   font-weight: 750;
 }
 
+.nav-menu {
+  position: relative;
+}
+
+.nav-menu-trigger {
+  gap: 6px;
+}
+
+.nav-menu-trigger span {
+  font-size: 0.7rem;
+  font-weight: 900;
+}
+
+.nav-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  min-width: 190px;
+  padding: 6px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--surface) 94%, transparent);
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(18px);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px);
+  transition:
+    opacity 160ms ease,
+    transform 160ms ease,
+    visibility 160ms ease;
+}
+
+.nav-dropdown a {
+  display: flex;
+  width: 100%;
+  justify-content: flex-start;
+  padding: 0 12px;
+  white-space: nowrap;
+}
+
+.nav-menu:hover .nav-dropdown,
+.nav-menu:focus-within .nav-dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
 .nav-links a:hover,
 .theme-toggle:hover {
   color: var(--text);
@@ -163,13 +222,23 @@ defineEmits<{
     order: 3;
     width: 100%;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
   }
 
-  .nav-links a {
+  .nav-links a,
+  .nav-menu-trigger {
     justify-content: center;
     padding: 0 6px;
     font-size: 0.82rem;
+  }
+
+  .nav-menu {
+    min-width: 0;
+  }
+
+  .nav-dropdown {
+    right: 0;
+    left: auto;
   }
 
   .brand small,
