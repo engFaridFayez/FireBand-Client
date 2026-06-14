@@ -355,7 +355,7 @@ p {
 h1 {
   margin-bottom: 18px;
   max-width: 100%;
-  font-size: clamp(3.5rem, 8.8vw, 8.4rem);
+  font-size: clamp(3.5rem, 7.6vw, 7.2rem);
   line-height: 0.82;
   letter-spacing: 0;
   text-transform: uppercase;
@@ -769,6 +769,10 @@ h2 {
 }
 
 @media (min-width: 1101px) {
+  h1 {
+    font-size: clamp(3.5rem, 7.1vw, 6.8rem);
+  }
+
   .hero-gallery {
     justify-self: end;
     width: min(100%, 520px);
