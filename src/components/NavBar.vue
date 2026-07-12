@@ -1,17 +1,75 @@
 <script setup lang="ts">
-import { RouterLink } from 'vue-router'
-import logo from "@/assets/images/logo.png"
+import { RouterLink, useRoute } from "vue-router";
+import logo from "@/assets/images/logo.png";
+import { storeToRefs } from "pinia";
+import { useAuthStore } from "@/stores/auth";
+import { useRouter } from "vue-router";
+import { ref, onMounted, onUnmounted, nextTick } from "vue";
+import { useAudioStore } from "@/stores/audio";
+
+const audio = useAudioStore();
+const authStore = useAuthStore();
+const router = useRouter();
+const route = useRoute();
+
+const scrolled = ref(false);
+const menuOpen = ref(false);
+
+const onScroll = () => {
+  scrolled.value = window.scrollY > 60;
+};
+
+const toggleMenu = () => {
+  menuOpen.value = !menuOpen.value;
+};
+
+const handleLogout = () => {
+  authStore.logout();
+};
+
+const { user } = storeToRefs(authStore);
 defineProps<{
-  theme: 'dark' | 'light'
-}>()
+  theme: "dark" | "light";
+}>();
 
 defineEmits<{
-  toggleTheme: []
-}>()
+  toggleTheme: [];
+}>();
+
+const scrollToSection = async (id: string) => {
+  menuOpen.value = false;
+
+  if (route.path !== "/") {
+    await router.push("/");
+
+    // wait for the home page to render before scrolling
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
+
+  const el = document.getElementById(id);
+
+  if (el) {
+    el.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }
+};
+onMounted(async () => {
+  if (authStore.access) {
+    await authStore.fetchUser();
+  }
+  await nextTick();
+  window.dispatchEvent(new Event("resize"));
+  window.addEventListener("scroll", onScroll);
+});
+onUnmounted(() => {
+  window.removeEventListener("scroll", onScroll);
+});
 </script>
 
 <template>
-  <header class="site-header">
+  <header :class="['site-header', { 'site-header-scrolled': scrolled }]">
     <RouterLink class="brand" to="/" aria-label="Fireband home">
       <span class="brand-mark">
         <img :src="logo" alt="" />
@@ -23,51 +81,149 @@ defineEmits<{
     </RouterLink>
 
     <nav class="nav-links" aria-label="Main navigation">
-      <a href="#about">About</a>
-      <a href="#shows">Shows</a>
+      <a href="#hero" class="nav-link" @click.prevent="scrollToSection('hero')"
+        >Home</a
+      >
+      <a
+        href="#about"
+        class="nav-link"
+        @click.prevent="scrollToSection('about')"
+        >About</a
+      >
+      <a
+        href="#booking"
+        class="nav-link"
+        @click.prevent="scrollToSection('shows')"
+        >Shows</a
+      >
+      <a
+        href="#booking"
+        class="nav-link"
+        @click.prevent="scrollToSection('team')"
+        >Band</a
+      >
       <div class="nav-menu">
-        <button class="nav-menu-trigger" type="button" href="#music" aria-haspopup="true">
+        <button
+          class="nav-menu-trigger"
+          type="button"
+          href="#music"
+          aria-haspopup="true"
+        >
           Music
           <span aria-hidden="true">v</span>
         </button>
         <div class="nav-dropdown" aria-label="Music event types">
-          <RouterLink class="dropdown-link" :to="{ path: '/', hash: '#music' }">Weddings</RouterLink>
-          <RouterLink class="dropdown-link" :to="{ path: '/', hash: '#music' }">Parties</RouterLink>
-          <RouterLink class="dropdown-link" :to="{ path: '/', hash: '#music' }">Private evenings</RouterLink>
+          <RouterLink class="dropdown-link" :to="{ path: '/', hash: '#music' }"
+            >Weddings</RouterLink
+          >
+          <RouterLink class="dropdown-link" :to="{ path: '/', hash: '#music' }"
+            >Parties</RouterLink
+          >
+          <RouterLink class="dropdown-link" :to="{ path: '/', hash: '#music' }"
+            >Private evenings</RouterLink
+          >
         </div>
       </div>
-      <a href="#team">Band</a>
-      <RouterLink class="nav-link nav-primary" to="/pricing">Booking</RouterLink>
+      <RouterLink class="nav-link nav-primary" to="/pricing"
+        >Booking</RouterLink
+      >
+      <div
+        v-if="authStore.access && authStore.user"
+        class="flex items-center gap-3"
+      >
+        <div
+          class="rounded-full border border-orange-500/20 bg-orange-500/10 px-4 py-2 backdrop-blur-md"
+        >
+          <span class="text-sm font-medium text-orange-300">
+            Hello,
+            <span class="font-bold text-white">
+              {{ authStore.user.username }}
+            </span>
+          </span>
+        </div>
+
+        <RouterLink
+          v-if="authStore.user.is_staff"
+          to="/admin"
+          class="rounded-full border border-yellow-500/20 bg-yellow-500/10 px-4 py-2 text-sm font-semibold text-yellow-300 transition-all duration-300 hover:bg-yellow-500 hover:text-black"
+        >
+          Dashboard
+        </RouterLink>
+
+        <button
+          @click="handleLogout"
+          class="rounded-full border border-red-500/20 bg-red-500/10 px-4 py-2 text-sm font-semibold text-red-300 transition-all duration-300 hover:bg-red-500 hover:text-white"
+        >
+          Logout
+        </button>
+      </div>
+
+      <div v-else>
+        <RouterLink
+          :to="{ name: 'login' }"
+          class="rounded-full border border-orange-500/20 bg-orange-500/10 px-5 py-2 text-sm font-semibold text-orange-300 transition-all duration-300 hover:bg-orange-500 hover:text-white"
+        >
+          Login
+        </RouterLink>
+      </div>
     </nav>
 
     <button
       class="theme-toggle"
       type="button"
-      :aria-label="theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'"
+      :aria-label="
+        theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'
+      "
       @click="$emit('toggleTheme')"
     >
-      <span class="toggle-icon" aria-hidden="true">{{ theme === 'dark' ? 'L' : 'D' }}</span>
-      <span>{{ theme === 'dark' ? 'Light' : 'Dark' }}</span>
+      <span class="toggle-icon" aria-hidden="true">{{
+        theme === "dark" ? "L" : "D"
+      }}</span>
+      <span>{{ theme === "dark" ? "Light" : "Dark" }}</span>
     </button>
   </header>
 </template>
 
 <style scoped>
 .site-header {
-  position: sticky;
-  top: 16px;
-  z-index: 20;
+  position: fixed;
+  top: 0px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  z-index: 1000;
+
+  width: min(1180px, calc(100% - 32px));
+
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: min(1180px, calc(100% - 32px));
-  margin: 0 auto;
+
   padding: 10px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: color-mix(in srgb, var(--surface) 82%, transparent);
-  box-shadow: var(--shadow-soft);
+
+  border-radius: 12px;
+
+  transition: all .3s ease;
+}
+.site-header {
+    transition:
+        top .3s,
+        width .3s,
+        padding .3s,
+        background .3s,
+        box-shadow .3s,
+        backdrop-filter .3s;
+}
+.site-header-scrolled {
+  top: 12px;
+
+  background: color-mix(in srgb, var(--surface) 90%, transparent);
+
   backdrop-filter: blur(18px);
+
+  border: 1px solid var(--line);
+
+  box-shadow: var(--shadow-soft);
 }
 
 .brand {
@@ -85,8 +241,7 @@ defineEmits<{
   width: 70px;
   height: 70px;
   border-radius: 8px;
-  background:
-    linear-gradient(135deg, #ff3d00, #ffb000 54%, #02d0ff);
+  background: linear-gradient(135deg, #ff3d00, #ffb000 54%, #02d0ff);
   box-shadow: 0 14px 34px rgba(255, 73, 13, 0.32);
   overflow: hidden;
 }

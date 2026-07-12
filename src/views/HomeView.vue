@@ -8,7 +8,9 @@ import image4 from "@/assets/images/image4.jpg"
 import image5 from "@/assets/images/image5.jpg"
 import image6 from "@/assets/images/image6.jpg"
 import image7 from "@/assets/images/image7.jpg"
+import { useAudioStore } from "@/stores/audio";
 
+const audio = useAudioStore();
 const theme = ref<'dark' | 'light'>('dark')
 
 const galleryImages = [image1, image2, image3, image4, image5, image6]
@@ -67,7 +69,7 @@ onBeforeUnmount(() => {
 
     <NavBar :theme="theme" @toggle-theme="theme = theme === 'dark' ? 'light' : 'dark'" />
 
-    <section class="hero-section" aria-labelledby="hero-title">
+    <section class="hero-section" id="hero" aria-labelledby="hero-title">
       <div class="hero-copy">
         <p class="eyebrow">Public debut season 2026</p>
         <h1 id="hero-title">Fireband</h1>
@@ -77,7 +79,7 @@ onBeforeUnmount(() => {
 
         <div class="hero-actions">
           <a class="primary-action" href="#booking">Book the band</a>
-          <a class="secondary-action" href="#music">Hear the sound</a>
+          <button class="secondary-action" @click="audio.play">Hear the sound</button>
         </div>
 
         <div class="stats-strip" aria-label="Fireband highlights">
@@ -328,6 +330,7 @@ onBeforeUnmount(() => {
   min-height: calc(100vh - 74px);
   padding: 72px 0 48px;
   animation: section-rise 800ms ease both;
+  margin-top: 25px;
 }
 
 .hero-copy {
