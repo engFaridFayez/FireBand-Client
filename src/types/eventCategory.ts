@@ -8,3 +8,11 @@ export interface EventCategory{
     description:string;
     subcategories: SubCategory[];
 }
+
+export interface CategoryState {
+  categories: EventCategory[];
+  selectedCategory: EventCategory | null;
+
+  loading: boolean;
+  error: string | null;
+}

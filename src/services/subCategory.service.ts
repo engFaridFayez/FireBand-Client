@@ -1,14 +1,30 @@
 import api from "./api";
 import type { SubCategory } from "@/types/subCategory";
 
-export default class SubCategoryService {
-  static async getAll() {
-    const response = await api.get<SubCategory[]>("sub-categories/");
-    return response.data;
+class SubCategoryService {
+  async getSubCategories() {
+    const res = await api.get<SubCategory[]>("/subcategories/");
+    return res.data;
   }
 
-  static async getBySlug(slug: string) {
-    const response = await api.get<SubCategory>(`sub-categories/${slug}/`);
-    return response.data;
+  async getSubCategory(slug: string) {
+    const res = await api.get<SubCategory>(`/subcategories/${slug}/`);
+    return res.data;
+  }
+
+  async createSubCategory(data: FormData) {
+    const res = await api.post<SubCategory>("/subcategories/", data);
+    return res.data;
+  }
+
+  async updateSubCategory(slug: string, data: FormData) {
+    const res = await api.patch<SubCategory>(`/subcategories/${slug}/`, data);
+    return res.data;
+  }
+
+  async deleteSubCategory(slug: string) {
+    await api.delete(`/subcategories/${slug}/`);
   }
 }
+
+export default new SubCategoryService();

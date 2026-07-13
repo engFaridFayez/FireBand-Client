@@ -45,3 +45,11 @@ export interface BookingPayload {
 
   notes: string;
 }
+
+export interface BookingState {
+  bookings: Booking[];
+  selectedBooking: Booking | null;
+
+  loading: boolean;
+  error: string | null;
+}

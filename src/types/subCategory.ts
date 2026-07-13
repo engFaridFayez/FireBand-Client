@@ -14,3 +14,11 @@ export interface SubCategory {
     rules: Rule[];
     duration: DurationOption[];
 }
+
+export interface SubCategoryState {
+  subCategories: SubCategory[];
+  selectedSubCategory: SubCategory | null;
+
+  loading: boolean;
+  error: string | null;
+}
