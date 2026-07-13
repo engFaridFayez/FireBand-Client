@@ -14,8 +14,12 @@ export const useAudioStore = defineStore("audio", () => {
   async function play() {
     if (!audio.value) return;
 
-    await audio.value.play();
-    isPlaying.value = true;
+    try {
+      await audio.value.play();
+      isPlaying.value = true;
+    } catch (err) {
+      console.error("Audio Error:", err);
+    }
   }
 
   function pause() {
