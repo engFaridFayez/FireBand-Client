@@ -2,27 +2,27 @@ import api from "./api";
 import type { Rule } from "@/types/rule";
 
 class RuleService {
-    async getRules() {
-        const res = await api.get<Rule[]>("/rules/");
-        return res.data;
+    async getRules(): Promise<Rule[]> {
+        const { data } = await api.get("/rules/");
+        return data;
     }
 
-    async getRule(id: number) {
-        const res = await api.get<Rule>(`/rules/${id}/`);
-        return res.data;
+    async getRule(id: number): Promise<Rule> {
+        const { data } = await api.get(`/rules/${id}/`);
+        return data;
     }
 
-    async createRule(data: object) {
-        const res = await api.post<Rule>("/rules/", data);
-        return res.data;
+    async createRule(data: FormData): Promise<Rule> {
+        const response = await api.post("/rules/", data);
+        return response.data;
     }
 
-    async updateRule(id: number, data: object) {
-        const res = await api.patch<Rule>(`/rules/${id}/`, data);
-        return res.data;
+    async updateRule(id: number, data: FormData): Promise<Rule> {
+        const response = await api.put(`/rules/${id}/`, data);
+        return response.data;
     }
 
-    async deleteRule(id: number) {
+    async deleteRule(id: number): Promise<void> {
         await api.delete(`/rules/${id}/`);
     }
 }

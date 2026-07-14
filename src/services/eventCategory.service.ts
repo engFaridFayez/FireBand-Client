@@ -7,8 +7,8 @@ class CategoryService {
     return res.data;
   }
 
-  async getCategory(slug: string) {
-    const res = await api.get<EventCategory>(`/categories/${slug}/`);
+  async getCategory(id: number) {
+    const res = await api.get<EventCategory>(`/categories/${id}/`);
     return res.data;
   }
 
@@ -17,13 +17,13 @@ class CategoryService {
     return res.data;
   }
 
-  async updateCategory(slug: string, data: FormData) {
-    const res = await api.patch<EventCategory>(`/categories/${slug}/`, data);
+  async updateCategory(id: number, data: FormData) {
+    const res = await api.patch<EventCategory>(`/categories/${id}/`, data);
     return res.data;
   }
 
-  async deleteCategory(slug: string) {
-    await api.delete(`/categories/${slug}/`);
+  async deleteCategory(id: number) {
+    await api.delete(`/categories/${id}/`);
   }
 }
 

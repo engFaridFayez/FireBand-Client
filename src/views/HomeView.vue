@@ -11,6 +11,7 @@ import image7 from "@/assets/images/image7.jpg";
 import { useAudioStore } from "@/stores/audio";
 import { useHomeStore } from "@/stores/home";
 import { storeToRefs } from "pinia";
+import { RouterLink } from "vue-router";
 const homeStore = useHomeStore();
 
 const { shows, team } = storeToRefs(homeStore);
@@ -220,10 +221,10 @@ onBeforeUnmount(() => {
       <div>
         <p class="eyebrow">Booking</p>
         <h2 id="booking-title">Bring Fireband to the stage.</h2>
+        <p>Reserve your date and let us create an unforgettable performance.</p>
       </div>
-      <a class="primary-action" href="mailto:booking@fireband.show"
-        >booking@fireband.show</a
-      >
+
+      <RouterLink class="primary-action" to="/booking"> Book Now </RouterLink>
     </section>
   </main>
 </template>

@@ -175,7 +175,7 @@ onUnmounted(() => {
           >
         </div>
       </div>
-      <RouterLink class="nav-link nav-primary" to="/pricing" @click="closeMenu"
+      <RouterLink class="nav-link nav-primary" to="/booking" @click="closeMenu"
         >Booking</RouterLink
       >
       <div

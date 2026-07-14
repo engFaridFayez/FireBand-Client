@@ -16,7 +16,7 @@ const links = [
   },
   {
     name: "Sub Categories",
-    path: "/admin/subcategories",
+    path: "/admin/sub-categories",
     icon: "📂",
   },
   {

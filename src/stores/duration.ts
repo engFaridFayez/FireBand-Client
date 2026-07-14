@@ -11,14 +11,28 @@ export const useDurationStore = defineStore("duration", () => {
     const loading = ref(false);
     const error = ref<string | null>(null);
 
-    async function fetchDurations() {
+    async function fetchDurations(subCategoryId?: number) {
         loading.value = true;
-        error.value = null;
 
         try {
-            durations.value = await DurationService.getDurations();
-        } catch (err: any) {
-            error.value = err.response?.data?.detail || err.message;
+
+            const data = await DurationService.getDurations();
+
+
+            if (subCategoryId) {
+
+                durations.value = data.filter(
+                    (item) =>
+                        item.sub_category === subCategoryId
+                );
+
+            } else {
+
+                durations.value = data;
+
+            }
+
+
         } finally {
             loading.value = false;
         }
@@ -26,74 +40,53 @@ export const useDurationStore = defineStore("duration", () => {
 
     async function fetchDuration(id: number) {
         loading.value = true;
-        error.value = null;
 
         try {
-            selectedDuration.value = await DurationService.getDuration(id);
-        } catch (err: any) {
-            error.value = err.response?.data?.detail || err.message;
+            selectedDuration.value =
+                await DurationService.getDuration(id);
         } finally {
             loading.value = false;
         }
     }
 
-    async function createDuration(data: object) {
-        loading.value = true;
-        error.value = null;
+    async function createDuration(data: FormData) {
+        const duration =
+            await DurationService.createDuration(data);
 
-        try {
-            const duration = await DurationService.createDuration(data);
-            durations.value.push(duration);
-            return duration;
-        } catch (err: any) {
-            error.value = err.response?.data?.detail || err.message;
-            throw err;
-        } finally {
-            loading.value = false;
-        }
+        durations.value.push(duration);
+
+        return duration;
     }
 
-    async function updateDuration(id: number, data: object) {
-        loading.value = true;
-        error.value = null;
+    async function updateDuration(
+        id: number,
+        data: FormData
+    ) {
+        const updated =
+            await DurationService.updateDuration(id, data);
 
-        try {
-            const updated = await DurationService.updateDuration(id, data);
+        const index = durations.value.findIndex(
+            (d) => d.id === updated.id
+        );
 
-            const index = durations.value.findIndex((d) => d.id === id);
-
-            if (index !== -1) {
-                durations.value[index] = updated;
-            }
-
-            selectedDuration.value = updated;
-
-            return updated;
-        } catch (err: any) {
-            error.value = err.response?.data?.detail || err.message;
-            throw err;
-        } finally {
-            loading.value = false;
+        if (index !== -1) {
+            durations.value[index] = updated;
         }
+
+        selectedDuration.value = updated;
+
+        return updated;
     }
 
     async function deleteDuration(id: number) {
-        loading.value = true;
-        error.value = null;
+        await DurationService.deleteDuration(id);
 
-        try {
-            await DurationService.deleteDuration(id);
+        durations.value = durations.value.filter(
+            (d) => d.id !== id
+        );
 
-            durations.value = durations.value.filter((d) => d.id !== id);
-
-            if (selectedDuration.value?.id === id) {
-                selectedDuration.value = null;
-            }
-        } catch (err: any) {
-            error.value = err.response?.data?.detail || err.message;
-            throw err;
-        } finally {
-            loading.value = false;
+        if (selectedDuration.value?.id === id) {
+            selectedDuration.value = null;
         }
     }
 

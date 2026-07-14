@@ -10,12 +10,18 @@ const baseOptions = {
 export const showPopup = (
   icon: "success" | "error" | "warning" | "info" | "question",
   title: string,
-  text: string
+  message: string | string[]
 ) => {
+  const html = Array.isArray(message)
+    ? `<ul style="text-align:left; margin:0; padding-left:1.2em;">${message
+      .map((m) => `<li>${m}</li>`)
+      .join("")}</ul>`
+    : message;
+
   return Swal.fire({
     icon,
     title,
-    text,
+    html,
     ...baseOptions,
   });
 };

@@ -27,11 +27,11 @@ export const useCategoryStore = defineStore("category", () => {
     }
   }
 
-  async function fetchCategory(slug: string) {
+  async function fetchCategory(id: number) {
     loading.value = true;
 
     try {
-      selectedCategory.value = await CategoryService.getCategory(slug);
+      selectedCategory.value = await CategoryService.getCategory(id);
     } catch (err: any) {
       error.value = err.response?.data?.detail || err.message;
     } finally {
@@ -51,11 +51,11 @@ export const useCategoryStore = defineStore("category", () => {
     }
   }
 
-  async function updateCategory(slug: string, data: FormData) {
+  async function updateCategory(id: number, data: FormData) {
     loading.value = true;
 
     try {
-      const updated = await CategoryService.updateCategory(slug, data);
+      const updated = await CategoryService.updateCategory(id, data);
 
       const index = categories.value.findIndex(
         (c) => c.id === updated.id
@@ -73,17 +73,17 @@ export const useCategoryStore = defineStore("category", () => {
     }
   }
 
-  async function deleteCategory(slug: string) {
+  async function deleteCategory(id: number) {
     loading.value = true;
 
     try {
-      await CategoryService.deleteCategory(slug);
+      await CategoryService.deleteCategory(id);
 
       categories.value = categories.value.filter(
-        (c) => c.slug !== slug
+        (c) => c.id !== id
       );
 
-      if (selectedCategory.value?.slug === slug) {
+      if (selectedCategory.value?.id === id) {
         selectedCategory.value = null;
       }
     } finally {
@@ -103,13 +103,13 @@ export const useCategoryStore = defineStore("category", () => {
     }
   }
 
-  async function fetchSubCategory(slug: string) {
+  async function fetchSubCategory(id: number) {
     loading.value = true;
     error.value = null;
 
     try {
       selectedSubCategory.value =
-        await SubCategoryService.getSubCategory(slug);
+        await SubCategoryService.getSubCategory(id);
     } catch (err: any) {
       error.value = err.response?.data?.detail || err.message;
     } finally {
@@ -136,13 +136,13 @@ export const useCategoryStore = defineStore("category", () => {
     }
   }
 
-  async function updateSubCategory(slug: string, data: FormData) {
+  async function updateSubCategory(id: number, data: FormData) {
     loading.value = true;
     error.value = null;
 
     try {
       const updated =
-        await SubCategoryService.updateSubCategory(slug, data);
+        await SubCategoryService.updateSubCategory(id, data);
 
       const index = subCategories.value.findIndex(
         (s) => s.id === updated.id
@@ -163,18 +163,18 @@ export const useCategoryStore = defineStore("category", () => {
     }
   }
 
-  async function deleteSubCategory(slug: string) {
+  async function deleteSubCategory(id: number) {
     loading.value = true;
     error.value = null;
 
     try {
-      await SubCategoryService.deleteSubCategory(slug);
+      await SubCategoryService.deleteSubCategory(id);
 
       subCategories.value = subCategories.value.filter(
-        (s) => s.slug !== slug
+        (s) => s.id !== id
       );
 
-      if (selectedSubCategory.value?.slug === slug) {
+      if (selectedSubCategory.value?.id === id) {
         selectedSubCategory.value = null;
       }
     } catch (err: any) {

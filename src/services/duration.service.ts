@@ -2,27 +2,30 @@ import api from "./api";
 import type { DurationOption } from "@/types/duration";
 
 class DurationService {
-  async getDurations() {
-    const res = await api.get<DurationOption[]>("/durations/");
-    return res.data;
+  async getDurations(): Promise<DurationOption[]> {
+    const { data } = await api.get("/durations/");
+    return data;
   }
 
-  async getDuration(id: number) {
-    const res = await api.get<DurationOption>(`/durations/${id}/`);
-    return res.data;
+  async getDuration(id: number): Promise<DurationOption> {
+    const { data } = await api.get(`/durations/${id}/`);
+    return data;
   }
 
-  async createDuration(data: object) {
-    const res = await api.post<DurationOption>("/durations/", data);
-    return res.data;
+  async createDuration(data: FormData): Promise<DurationOption> {
+    const response = await api.post("/durations/", data);
+    return response.data;
   }
 
-  async updateDuration(id: number, data: object) {
-    const res = await api.patch<DurationOption>(`/durations/${id}/`, data);
-    return res.data;
+  async updateDuration(
+    id: number,
+    data: FormData
+  ): Promise<DurationOption> {
+    const response = await api.put(`/durations/${id}/`, data);
+    return response.data;
   }
 
-  async deleteDuration(id: number) {
+  async deleteDuration(id: number): Promise<void> {
     await api.delete(`/durations/${id}/`);
   }
 }

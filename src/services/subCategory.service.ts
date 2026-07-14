@@ -7,8 +7,8 @@ class SubCategoryService {
     return res.data;
   }
 
-  async getSubCategory(slug: string) {
-    const res = await api.get<SubCategory>(`/subcategories/${slug}/`);
+  async getSubCategory(id: number) {
+    const res = await api.get<SubCategory>(`/subcategories/${id}/`);
     return res.data;
   }
 
@@ -17,13 +17,13 @@ class SubCategoryService {
     return res.data;
   }
 
-  async updateSubCategory(slug: string, data: FormData) {
-    const res = await api.patch<SubCategory>(`/subcategories/${slug}/`, data);
+  async updateSubCategory(id: number, data: FormData) {
+    const res = await api.patch<SubCategory>(`/subcategories/${id}/`, data);
     return res.data;
   }
 
-  async deleteSubCategory(slug: string) {
-    await api.delete(`/subcategories/${slug}/`);
+  async deleteSubCategory(id: number) {
+    await api.delete(`/subcategories/${id}/`);
   }
 }
 
