@@ -7,7 +7,7 @@ export const HomeService = {
     },
 
     getShowById(id: number) {
-        return api.get<Show>(`shows/${id}`)
+        return api.get<Show>(`shows/${id}/`)
     },
 
     createShow(data: FormData) {
@@ -15,11 +15,11 @@ export const HomeService = {
     },
 
     editShow(id: number, data: FormData) {
-        return api.put<Show>(`shows/${id}`, data)
+        return api.put<Show>(`shows/${id}/`, data)
     },
 
     deleteShow(id: number) {
-        return api.delete(`shows/${id}`);
+        return api.delete(`shows/${id}/`);
     },
 
     getAllTeam() {
@@ -27,15 +27,15 @@ export const HomeService = {
     },
 
     getTeamMemberById(id: number) {
-        return api.get<Team>(`team/${id}`)
+        return api.get<Team>(`team/${id}/`)
     },
     createTeamMember(data: FormData) {
         return api.post<Team>("team/", data)
     },
     editTeamMember(id: number, data: FormData) {
-        return api.put<Team>(`team/${id}`, data)
+        return api.patch<Team>(`team/${id}/`, data);
     },
     deleteTeamMember(id: number) {
-        return api.delete(`team/${id}`);
+        return api.delete(`team/${id}/`);
     },
 }

@@ -54,6 +54,33 @@ const DuraionDetailsView = () =>
 const DuraionEditView = () =>
   import("@/views/admin/durations/DurationEditView.vue")
 
+// Booking
+const BookingListView = () => 
+  import("@/views/admin/booking/BookingListView.vue")
+const BookingDetailsView = () => 
+  import("@/views/admin/booking/BookingDetailsView.vue")
+
+// Shows
+const ShowListView = () =>
+  import("@/views/admin/shows/ShowListView.vue")
+const ShowCreateView = () =>
+  import("@/views/admin/shows/ShowCreateView.vue")
+const ShowDetailsView = () =>
+  import("@/views/admin/shows/ShowDetailsView.vue")
+const ShowEditView = () =>
+  import("@/views/admin/shows/ShowEditView.vue")
+
+// Team
+const TeamListView = () =>
+  import("@/views/admin/team/TeamListView.vue")
+const TeamCreateView = () =>
+  import("@/views/admin/team/TeamCreateView.vue")
+const TeamDetailsView = () =>
+  import("@/views/admin/team/TeamDetailsView.vue")
+const TeamEditView = () =>
+  import("@/views/admin/team/TeamEditView.vue")
+
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
 
@@ -203,6 +230,61 @@ const router = createRouter({
           path: "durations/:id/edit",
           name: "admin-duration-edit",
           component: DuraionEditView,
+        },
+        // Booking
+        {
+          path:"bookings",
+          name:"admin-booking-list",
+          component: BookingListView
+        },
+        {
+          path:"bookings/:id",
+          name:"admin-booking-details",
+          component:BookingDetailsView
+        },
+
+        // Shows
+        {
+          path: "shows",
+          name: "admin-shows",
+          component: ShowListView,
+        },
+        {
+          path: "shows/create",
+          name: "admin-show-create",
+          component: ShowCreateView,
+        },
+        {
+          path: "shows/:id",
+          name: "admin-show-details",
+          component: ShowDetailsView,
+        },
+        {
+          path: "shows/:id/edit",
+          name: "admin-show-edit",
+          component: ShowEditView,
+        },
+
+        // Team
+        {
+          path: "team",
+          name: "admin-team",
+          component: TeamListView,
+        },
+        {
+          path: "team/create",
+          name: "admin-team-create",
+          component: TeamCreateView,
+        },
+        {
+          path: "team/:id",
+          name: "admin-team-details",
+          component: TeamDetailsView,
+        },
+        {
+          path: "team/:id/edit",
+          name: "admin-team-edit",
+          component: TeamEditView,
         },
 
       ],
