@@ -6,6 +6,11 @@ import { useAuthStore } from "@/stores/auth";
 import { useRouter } from "vue-router";
 import { ref, onMounted, onUnmounted, nextTick } from "vue";
 import { useAudioStore } from "@/stores/audio";
+import { useCategoryStore } from "@/stores/category";
+
+const categoryStore = useCategoryStore();
+
+const { categories } = storeToRefs(categoryStore);
 
 const audio = useAudioStore();
 const authStore = useAuthStore();
@@ -85,6 +90,7 @@ onMounted(async () => {
     await authStore.fetchUser();
   }
   await nextTick();
+  await categoryStore.fetchCategories();
   updateHeaderHeight();
   window.dispatchEvent(new Event("resize"));
   window.addEventListener("scroll", onScroll);
@@ -151,28 +157,24 @@ onUnmounted(() => {
           :aria-expanded="musicMenuOpen"
           @click="toggleMusicMenu"
         >
-          Music
+          Portfolio
           <span aria-hidden="true">v</span>
         </button>
         <div class="nav-dropdown" aria-label="Music event types">
           <RouterLink
+            v-for="category in categories"
+            :key="category.id"
             class="dropdown-link"
-            :to="{ path: '/', hash: '#music' }"
+            :to="{
+              name: 'portfolio-category',
+              params: {
+                id: category.id,
+              },
+            }"
             @click="closeMenu"
-            >Weddings</RouterLink
           >
-          <RouterLink
-            class="dropdown-link"
-            :to="{ path: '/', hash: '#music' }"
-            @click="closeMenu"
-            >Parties</RouterLink
-          >
-          <RouterLink
-            class="dropdown-link"
-            :to="{ path: '/', hash: '#music' }"
-            @click="closeMenu"
-            >Private evenings</RouterLink
-          >
+            {{ category.name }}
+          </RouterLink>
         </div>
       </div>
       <RouterLink class="nav-link nav-primary" to="/booking" @click="closeMenu"

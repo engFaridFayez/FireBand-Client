@@ -25,6 +25,13 @@ class SubCategoryService {
   async deleteSubCategory(id: number) {
     await api.delete(`/subcategories/${id}/`);
   }
+  async getSubCategoriesByCategory(categoryId: number) {
+    const { data } = await api.get<SubCategory[]>("/subcategories/", {
+      params: { category: categoryId },
+    });
+    return data;
+  }
 }
+
 
 export default new SubCategoryService();

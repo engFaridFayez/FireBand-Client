@@ -185,6 +185,22 @@ export const useCategoryStore = defineStore("category", () => {
     }
   }
 
+
+  // stores/category.ts — add this action
+  async function fetchSubCategoriesByCategory(categoryId: number) {
+    loading.value = true;
+    error.value = null;
+
+    try {
+      subCategories.value =
+        await SubCategoryService.getSubCategoriesByCategory(categoryId);
+    } catch (err: any) {
+      error.value = err.response?.data?.detail || err.message;
+    } finally {
+      loading.value = false;
+    }
+  }
+
   return {
     categories,
     selectedCategory,
@@ -206,5 +222,6 @@ export const useCategoryStore = defineStore("category", () => {
     createSubCategory,
     updateSubCategory,
     deleteSubCategory,
+    fetchSubCategoriesByCategory
   };
 });

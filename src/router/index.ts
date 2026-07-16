@@ -55,9 +55,9 @@ const DuraionEditView = () =>
   import("@/views/admin/durations/DurationEditView.vue")
 
 // Booking
-const BookingListView = () => 
+const BookingListView = () =>
   import("@/views/admin/booking/BookingListView.vue")
-const BookingDetailsView = () => 
+const BookingDetailsView = () =>
   import("@/views/admin/booking/BookingDetailsView.vue")
 
 // Shows
@@ -107,9 +107,22 @@ const router = createRouter({
       component: LoginView,
     },
     {
-      path:"/booking",
-      name:"booking",
-      component:BookingFormView
+      path: "/booking",
+      name: "booking",
+      component: BookingFormView
+    },
+
+    {
+      path: "/portfolio/:id",
+      name: "portfolio-category",
+      component: () => import("@/views/PortfolioCategory.vue"),
+      props: true,
+    },
+    {
+      path: "/portfolio/:categoryId/sub/:subId",
+      name: "portfolio-subcategory",
+      component: () => import("@/views/PortfolioSubCategory.vue"),
+      props: true,
     },
 
     // ==========================
@@ -233,14 +246,14 @@ const router = createRouter({
         },
         // Booking
         {
-          path:"bookings",
-          name:"admin-booking-list",
+          path: "bookings",
+          name: "admin-booking-list",
           component: BookingListView
         },
         {
-          path:"bookings/:id",
-          name:"admin-booking-details",
-          component:BookingDetailsView
+          path: "bookings/:id",
+          name: "admin-booking-details",
+          component: BookingDetailsView
         },
 
         // Shows

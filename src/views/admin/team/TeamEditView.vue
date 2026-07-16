@@ -195,7 +195,7 @@ async function submit() {
 
         <button
           type="submit"
-          class="rounded-lg bg-gradient-to-r from-[#ffb000] to-[#ff4b12] px-8 py-3 font-bold text-[#140a05] shadow-lg transition duration-300 hover:scale-[1.02]"
+          class="rounded-lg bg-linear-to-r from-[#ffb000] to-[#ff4b12] px-8 py-3 font-bold text-[#140a05] shadow-lg transition duration-300 hover:scale-[1.02]"
         >
           Save Changes
         </button>

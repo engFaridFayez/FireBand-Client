@@ -76,7 +76,7 @@ onMounted(async () => {
           </p>
 
           <span
-            class="inline-flex rounded-full bg-gradient-to-r from-[#ffb000] to-[#ff4b12] px-4 py-2 font-bold text-[#140a05]"
+            class="inline-flex rounded-full bg-linear-to-r from-[#ffb000] to-[#ff4b12] px-4 py-2 font-bold text-[#140a05]"
           >
             {{ homeStore.teamMember.accent }}
           </span>
