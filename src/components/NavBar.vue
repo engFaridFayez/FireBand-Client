@@ -403,9 +403,10 @@ onUnmounted(() => {
 .nav-links {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 4px;
 }
-
 .nav-links a,
 .theme-toggle,
 .audio-toggle,
@@ -603,6 +604,20 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-shrink: 0;
+}
+
+.account-block span,
+.account-block .rounded-full {
+  white-space: nowrap;
+}
+
+.account-block .rounded-full:first-child span {
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .nav-backdrop {
@@ -625,11 +640,14 @@ onUnmounted(() => {
     z-index: 999;
 
     flex-direction: column;
+    flex-wrap: nowrap;  
     align-items: stretch;
+    justify-content: flex-start;
     gap: 4px;
 
     max-height: calc(100vh - 110px);
     overflow-y: auto;
+    overflow-x: hidden;  
 
     padding: 12px;
     border: 1px solid var(--line);
@@ -688,6 +706,10 @@ onUnmounted(() => {
     padding-top: 6px;
     border-top: 1px solid var(--line);
     margin-top: 6px;
+  }
+
+  .account-block .rounded-full:first-child span {
+    max-width: none;
   }
 
   .nav-backdrop {

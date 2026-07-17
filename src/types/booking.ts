@@ -36,8 +36,8 @@ export interface BookingPayload {
   location: string;
 
   category: number;
-  sub_category: number;
-  duration: number;
+  sub_category: number | null;
+  duration: number | null;
 
   custom_sub_category: string;
 

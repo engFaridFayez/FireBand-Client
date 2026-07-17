@@ -4,6 +4,7 @@ import { storeToRefs } from "pinia";
 import { RouterLink } from "vue-router";
 
 import { useCategoryStore } from "@/stores/category";
+import { showPopup } from "@/lib/swal";
 
 const categoryStore = useCategoryStore();
 
@@ -11,14 +12,40 @@ const { categories, loading } = storeToRefs(categoryStore);
 
 onMounted(() => {
   categoryStore.fetchCategories();
-  
 });
 
 async function deleteCategory(id: number) {
-  if (!confirm("Delete this category?")) return;
+  const result = await showPopup(
+    "warning",
+    "Delete Category",
+    "Are you sure you want to delete this category?",
+    {
+      showCancelButton: true,
+      confirmButtonText: "Delete",
+      cancelButtonText: "Cancel",
+      confirmButtonColor: "#dc2626",
+      cancelButtonColor: "#6b7280",
+      reverseButtons: true,
+    }
+  );
 
-  await categoryStore.deleteCategory(id);
-  console.log(categories.value);
+  if (!result.isConfirmed) return;
+
+  try {
+    await categoryStore.deleteCategory(id);
+
+    await showPopup(
+      "success",
+      "Deleted",
+      "Category deleted successfully."
+    );
+  } catch (error: any) {
+    await showPopup(
+      "error",
+      "Error",
+      error.response?.data?.detail ?? "Something went wrong."
+    );
+  }
 }
 </script>
 
@@ -82,7 +109,11 @@ async function deleteCategory(id: number) {
                 </RouterLink>
 
                 <RouterLink
-                  :to="{ name: 'admin-category-edit', params: { id: category.id } }"
+                  v-if="category.id"
+                  :to="{
+                    name: 'admin-category-edit',
+                    params: { id: category.id },
+                  }"
                   class="rounded bg-green-600 px-3 py-2 text-sm"
                 >
                   Edit

@@ -38,15 +38,23 @@ const submitted = ref(false);
 const categories = computed(() => categoryStore.categories);
 
 const subCategories = computed(() =>
-  categoryStore.subCategories.filter((item) => item.category === form.category),
+  categoryStore.subCategories.filter(
+    (item) => item.category === form.category,
+  ),
+);
+
+const selectedSubCategory = computed(() =>
+  categoryStore.subCategories.find(
+    (item) => item.id === form.sub_category,
+  ),
 );
 
 const durations = computed(() => {
-  const selected = categoryStore.subCategories.find(
-    (item) => item.id === form.sub_category,
-  );
+  return selectedSubCategory.value?.duration ?? [];
+});
 
-  return selected?.duration ?? [];
+const showCustomSubCategory = computed(() => {
+  return selectedSubCategory.value?.is_custom ?? false;
 });
 
 onMounted(async () => {
@@ -56,22 +64,19 @@ onMounted(async () => {
   ]);
 });
 
-async function changeCategory() {
+function changeCategory() {
   form.sub_category = 0;
   form.duration = 0;
+  form.custom_sub_category = "";
 }
 
 function changeSubCategory() {
   form.duration = 0;
+
+  if (!showCustomSubCategory.value) {
+    form.custom_sub_category = "";
+  }
 }
-
-const selectedSubCategory = computed(() =>
-  categoryStore.subCategories.find((item) => item.id === form.sub_category),
-);
-
-const showCustomSubCategory = computed(
-  () => selectedSubCategory.value?.slug === "other",
-);
 
 async function submitBooking() {
   try {
@@ -87,7 +92,8 @@ async function submitBooking() {
 
     router.push("/");
   } catch (error: any) {
-    let message: string | string[] = "Something went wrong. Please try again.";
+    let message: string | string[] =
+      "Something went wrong. Please try again.";
 
     const errors = error.response?.data;
 
@@ -111,8 +117,7 @@ async function submitBooking() {
   }
 }
 
-// Shared Tailwind classes for form controls, kept in one place so every
-// input/select/textarea stays visually consistent.
+// Shared Tailwind classes
 const fieldClass =
   "w-full min-h-[50px] rounded-lg border border-white/[0.13] bg-white/[0.06] px-4 py-3 text-[#fff8ef] placeholder:text-[#b9b1aa] outline-none transition-colors duration-200 focus:border-[#ff4b12]/60 focus:bg-white/[0.09] disabled:opacity-50";
 
@@ -175,7 +180,7 @@ const selectClass = `${fieldClass} appearance-none bg-[right_1rem_center] bg-no-
         @submit.prevent="submitBooking"
       >
         <div class="grid gap-2">
-          <label class="text-sm font-bold text-white/80"> Full Name </label>
+          <label class="text-sm font-bold text-white/80">Full Name</label>
 
           <input
             v-model="form.full_name"
@@ -187,7 +192,7 @@ const selectClass = `${fieldClass} appearance-none bg-[right_1rem_center] bg-no-
         </div>
 
         <div class="grid gap-2">
-          <label class="text-sm font-bold text-white/80"> Phone </label>
+          <label class="text-sm font-bold text-white/80">Phone</label>
 
           <input
             v-model="form.phone"
@@ -199,7 +204,7 @@ const selectClass = `${fieldClass} appearance-none bg-[right_1rem_center] bg-no-
         </div>
 
         <div class="grid gap-2">
-          <label class="text-sm font-bold text-white/80"> Email </label>
+          <label class="text-sm font-bold text-white/80">Email</label>
 
           <input
             v-model="form.email"
@@ -220,7 +225,9 @@ const selectClass = `${fieldClass} appearance-none bg-[right_1rem_center] bg-no-
             :class="selectClass"
             @change="changeCategory"
           >
-            <option :value="0" class="bg-[#111014]">Select Category</option>
+            <option :value="0" class="bg-[#111014]">
+              Select Category
+            </option>
 
             <option
               v-for="category in categories"
@@ -234,7 +241,9 @@ const selectClass = `${fieldClass} appearance-none bg-[right_1rem_center] bg-no-
         </div>
 
         <div class="grid gap-2">
-          <label class="text-sm font-bold text-white/80"> Sub Category </label>
+          <label class="text-sm font-bold text-white/80">
+            Sub Category
+          </label>
 
           <select
             v-model.number="form.sub_category"
@@ -242,7 +251,9 @@ const selectClass = `${fieldClass} appearance-none bg-[right_1rem_center] bg-no-
             :class="selectClass"
             @change="changeSubCategory"
           >
-            <option :value="0" class="bg-[#111014]">Select Sub Category</option>
+            <option :value="0" class="bg-[#111014]">
+              Select Sub Category
+            </option>
 
             <option
               v-for="item in subCategories"
@@ -255,7 +266,10 @@ const selectClass = `${fieldClass} appearance-none bg-[right_1rem_center] bg-no-
           </select>
         </div>
 
-        <div v-if="showCustomSubCategory" class="grid gap-2">
+        <div
+          v-if="showCustomSubCategory"
+          class="grid gap-2"
+        >
           <label class="text-sm font-bold text-white/80">
             Custom Sub Category
           </label>
@@ -263,16 +277,23 @@ const selectClass = `${fieldClass} appearance-none bg-[right_1rem_center] bg-no-
           <input
             v-model="form.custom_sub_category"
             type="text"
-            placeholder="Custom Sub Category"
+            placeholder="Enter your custom sub category"
+            :required="showCustomSubCategory"
             :class="fieldClass"
           />
         </div>
 
         <div class="grid gap-2">
-          <label class="text-sm font-bold text-white/80"> Duration </label>
+          <label class="text-sm font-bold text-white/80">Duration</label>
 
-          <select v-model.number="form.duration" required :class="selectClass">
-            <option :value="0" class="bg-[#111014]">Select Duration</option>
+          <select
+            v-model.number="form.duration"
+            required
+            :class="selectClass"
+          >
+            <option :value="0" class="bg-[#111014]">
+              Select Duration
+            </option>
 
             <option
               v-for="item in durations"
@@ -287,7 +308,9 @@ const selectClass = `${fieldClass} appearance-none bg-[right_1rem_center] bg-no-
 
         <div class="grid gap-4 sm:grid-cols-2">
           <div class="grid gap-2">
-            <label class="text-sm font-bold text-white/80"> Event Date </label>
+            <label class="text-sm font-bold text-white/80">
+              Event Date
+            </label>
 
             <input
               v-model="form.event_date"
@@ -298,7 +321,9 @@ const selectClass = `${fieldClass} appearance-none bg-[right_1rem_center] bg-no-
           </div>
 
           <div class="grid gap-2">
-            <label class="text-sm font-bold text-white/80"> Event Time </label>
+            <label class="text-sm font-bold text-white/80">
+              Event Time
+            </label>
 
             <input
               v-model="form.event_time"
@@ -310,7 +335,7 @@ const selectClass = `${fieldClass} appearance-none bg-[right_1rem_center] bg-no-
         </div>
 
         <div class="grid gap-2">
-          <label class="text-sm font-bold text-white/80"> Location </label>
+          <label class="text-sm font-bold text-white/80">Location</label>
 
           <input
             v-model="form.location"
@@ -322,7 +347,9 @@ const selectClass = `${fieldClass} appearance-none bg-[right_1rem_center] bg-no-
         </div>
 
         <div class="grid gap-2">
-          <label class="text-sm font-bold text-white/80"> Team Members </label>
+          <label class="text-sm font-bold text-white/80">
+            Team Members
+          </label>
 
           <input
             v-model.number="form.team_members"
@@ -335,7 +362,7 @@ const selectClass = `${fieldClass} appearance-none bg-[right_1rem_center] bg-no-
         </div>
 
         <div class="grid gap-2">
-          <label class="text-sm font-bold text-white/80"> Notes </label>
+          <label class="text-sm font-bold text-white/80">Notes</label>
 
           <textarea
             v-model="form.notes"

@@ -17,6 +17,7 @@ const form = reactive({
   min_members: 5,
   max_members: 40,
   image: null as File | null,
+  is_custom: false,
 });
 
 function handleImage(event: Event) {
@@ -81,6 +82,7 @@ async function submit() {
     data.append("category", form.category);
     data.append("min_members", String(form.min_members));
     data.append("max_members", String(form.max_members));
+    data.append("is_custom", String(form.is_custom));
 
     if (form.image) {
       data.append("image", form.image);
@@ -176,6 +178,18 @@ async function submit() {
           @change="handleImage"
           class="w-full rounded-lg bg-zinc-900 border border-zinc-700 px-4 py-2 text-white"
         />
+      </div>
+      <div class="flex items-center gap-3">
+        <input
+          id="is_custom"
+          v-model="form.is_custom"
+          type="checkbox"
+          class="h-4 w-4 rounded border-zinc-600 text-yellow-500 focus:ring-yellow-500"
+        />
+
+        <label for="is_custom" class="text-sm text-white">
+          Allow custom sub category
+        </label>
       </div>
 
       <div class="flex justify-end gap-3">

@@ -1,3 +1,5 @@
+import type { SubCategory } from "./subCategory";
+
 export interface Show {
     id:number;
     title:string;
@@ -19,7 +21,7 @@ export interface Team {
 
 export interface GalleryImage {
   id: number;
-  sub_category: number;
+  sub_category: SubCategory;
   image: string;
   title: string;
   order: number;
@@ -29,10 +31,10 @@ export interface GalleryImage {
 
 export interface Reel {
   id: number;
-  sub_category: number;
+  sub_category: SubCategory;
   title: string;
   thumbnail: string | null;
-  platform: "youtube" | "instagram" | "facebook" | "tiktok";
+  platform: "youtube" | "facebook";
   platform_display: string;
   embed_url: string;
   order: number;

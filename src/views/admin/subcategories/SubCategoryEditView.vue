@@ -20,6 +20,7 @@ const form = reactive({
   min_members: 5,
   max_members: 40,
   image: null as File | null,
+  is_custom: false,
 });
 
 async function loadSubCategory() {
@@ -33,6 +34,8 @@ async function loadSubCategory() {
   form.category = String(selectedSubCategory.value.category);
   form.min_members = selectedSubCategory.value.min_members;
   form.max_members = selectedSubCategory.value.max_members;
+  console.log(selectedSubCategory.value?.is_custom);
+  form.is_custom = selectedSubCategory.value.is_custom;
 }
 
 function handleImage(event: Event) {
@@ -97,10 +100,12 @@ async function submit() {
     data.append("category", form.category);
     data.append("min_members", String(form.min_members));
     data.append("max_members", String(form.max_members));
+    data.append("is_custom", String(form.is_custom));
 
     if (form.image) {
       data.append("image", form.image);
     }
+    console.log(form);
 
     await categoryStore.updateSubCategory(Number(route.params.id), data);
 
@@ -203,6 +208,18 @@ onMounted(loadSubCategory);
           :src="selectedSubCategory.image"
           class="w-40 rounded-lg border border-zinc-700"
         />
+      </div>
+      <div class="flex items-center gap-3">
+        <input
+          id="is_custom"
+          v-model="form.is_custom"
+          type="checkbox"
+          class="h-4 w-4 rounded border-zinc-600 text-yellow-500 focus:ring-yellow-500"
+        />
+
+        <label for="is_custom" class="text-sm font-medium text-white">
+          Allow custom sub category
+        </label>
       </div>
 
       <div class="flex justify-end gap-3">

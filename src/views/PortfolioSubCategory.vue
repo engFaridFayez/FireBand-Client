@@ -1,11 +1,18 @@
 <!-- views/PortfolioSubCategory.vue -->
 <script setup lang="ts">
-import { ref, onMounted, watch } from "vue";
+import { ref, computed, onMounted, onUnmounted, watch, nextTick } from "vue";
 import { useRoute } from "vue-router";
 import GalleryImageService from "@/services/gallery.service";
 import ReelService from "@/services/reel.service";
 import type { GalleryImage } from "@/types/home";
 import type { Reel } from "@/types/home";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+
+function goHome() {
+  router.push("/");
+}
 
 const props = defineProps<{ subId: string }>();
 const route = useRoute();
@@ -14,8 +21,196 @@ const images = ref<GalleryImage[]>([]);
 const reels = ref<Reel[]>([]);
 const loading = ref(false);
 const error = ref<string | null>(null);
-const lightboxImage = ref<GalleryImage | null>(null);
 
+/* ---------- Gallery lightbox with prev/next navigation ---------- */
+const lightboxIndex = ref<number | null>(null);
+
+const lightboxImage = computed(() =>
+  lightboxIndex.value !== null ? images.value[lightboxIndex.value] : null,
+);
+
+function openLightbox(index: number) {
+  lightboxIndex.value = index;
+}
+
+function closeLightbox() {
+  lightboxIndex.value = null;
+}
+
+function nextImage() {
+  if (lightboxIndex.value === null) return;
+  lightboxIndex.value = (lightboxIndex.value + 1) % images.value.length;
+}
+
+function prevImage() {
+  if (lightboxIndex.value === null) return;
+  lightboxIndex.value =
+    (lightboxIndex.value - 1 + images.value.length) % images.value.length;
+}
+
+function onLightboxKeydown(e: KeyboardEvent) {
+  if (e.key === "ArrowRight") {
+    e.preventDefault();
+    nextImage();
+  } else if (e.key === "ArrowLeft") {
+    e.preventDefault();
+    prevImage();
+  } else if (e.key === "Escape") {
+    closeLightbox();
+  }
+}
+
+watch(lightboxIndex, (val) => {
+  if (val !== null) {
+    window.addEventListener("keydown", onLightboxKeydown);
+    document.body.style.overflow = "hidden";
+  } else {
+    window.removeEventListener("keydown", onLightboxKeydown);
+    // only release scroll lock if the reel modal isn't also open
+    if (!reelModalOpen.value) document.body.style.overflow = "";
+  }
+});
+
+/* ---------- Reel embed cleanup (strip platform chrome) ---------- */
+function cleanEmbedUrl(url: string) {
+  if (!url) return url;
+  try {
+    const u = new URL(url);
+
+    if (u.hostname.includes("youtube.com") || u.hostname.includes("youtu.be")) {
+      u.searchParams.set("controls", "0");
+      u.searchParams.set("modestbranding", "1");
+      u.searchParams.set("rel", "0");
+      u.searchParams.set("iv_load_policy", "3");
+      u.searchParams.set("disablekb", "1");
+      u.searchParams.set("playsinline", "1");
+      u.searchParams.set("fs", "0");
+      return u.toString();
+    }
+
+    if (u.hostname.includes("vimeo.com")) {
+      u.searchParams.set("title", "0");
+      u.searchParams.set("byline", "0");
+      u.searchParams.set("portrait", "0");
+      u.searchParams.set("controls", "0");
+      return u.toString();
+    }
+
+    return url;
+  } catch {
+    return url;
+  }
+}
+
+/* ---------- Reel TikTok-style feed modal ---------- */
+const reelModalOpen = ref(false);
+const activeReelIndex = ref(0);
+const reelFeedRef = ref<HTMLElement | null>(null);
+const reelItemEls = ref<(HTMLElement | null)[]>([]);
+let reelObserver: IntersectionObserver | null = null;
+
+function setReelItemRef(el: any, i: number) {
+  reelItemEls.value[i] = el as HTMLElement | null;
+}
+
+// Only the active reel gets a real src — every other iframe is emptied,
+// which unloads it and stops playback.
+function reelSrc(i: number, embedUrl: string) {
+  return i === activeReelIndex.value ? cleanEmbedUrl(embedUrl) : "";
+}
+
+function setupReelObserver() {
+  reelObserver?.disconnect();
+
+  reelObserver = new IntersectionObserver(
+    (entries) => {
+      // Pick whichever entry is most visible right now
+      let best: IntersectionObserverEntry | null = null;
+      for (const entry of entries) {
+        if (!best || entry.intersectionRatio > best.intersectionRatio) {
+          best = entry;
+        }
+      }
+      if (best && best.isIntersecting) {
+        const idx = reelItemEls.value.indexOf(best.target as HTMLElement);
+        if (idx !== -1 && idx !== activeReelIndex.value) {
+          activeReelIndex.value = idx;
+        }
+      }
+    },
+    {
+      root: reelFeedRef.value,
+      threshold: [0.6],
+    },
+  );
+
+  reelItemEls.value.forEach((el) => {
+    if (el) reelObserver!.observe(el);
+  });
+}
+
+function openReel(index: number) {
+  activeReelIndex.value = index;
+  reelModalOpen.value = true;
+  nextTick(() => {
+    reelItemEls.value[index]?.scrollIntoView({ block: "start" });
+    reelFeedRef.value?.focus();
+    setupReelObserver();
+  });
+}
+
+function closeReelModal() {
+  reelModalOpen.value = false;
+  reelObserver?.disconnect();
+  reelObserver = null;
+}
+
+function scrollToReel(i: number) {
+  if (i < 0 || i >= reels.value.length) return;
+  reelItemEls.value[i]?.scrollIntoView({ behavior: "smooth", block: "start" });
+  // activeReelIndex will also update via the observer once the scroll settles,
+  // but we set it immediately so the src swap feels instant on keyboard nav
+  activeReelIndex.value = i;
+}
+
+function nextReel() {
+  scrollToReel(activeReelIndex.value + 1);
+}
+
+function prevReel() {
+  scrollToReel(activeReelIndex.value - 1);
+}
+
+function onFeedKeydown(e: KeyboardEvent) {
+  if (e.key === "ArrowDown") {
+    e.preventDefault();
+    nextReel();
+  } else if (e.key === "ArrowUp") {
+    e.preventDefault();
+    prevReel();
+  } else if (e.key === "Escape") {
+    closeReelModal();
+  }
+}
+
+// Lock background scroll while the reel feed is open
+watch(reelModalOpen, (open) => {
+  document.body.style.overflow = open ? "hidden" : "";
+  if (open) {
+    window.addEventListener("keydown", onFeedKeydown);
+  } else {
+    window.removeEventListener("keydown", onFeedKeydown);
+  }
+});
+
+onUnmounted(() => {
+  window.removeEventListener("keydown", onFeedKeydown);
+  window.removeEventListener("keydown", onLightboxKeydown);
+  reelObserver?.disconnect();
+  document.body.style.overflow = "";
+});
+
+/* ---------- Data loading ---------- */
 const load = async (subId: string) => {
   loading.value = true;
   error.value = null;
@@ -27,19 +222,12 @@ const load = async (subId: string) => {
     ]);
     images.value = imgData;
     reels.value = reelData;
+    reelItemEls.value = [];
   } catch (err: any) {
     error.value = err.response?.data?.detail || err.message;
   } finally {
     loading.value = false;
   }
-};
-
-const openLightbox = (img: GalleryImage) => {
-  lightboxImage.value = img;
-};
-
-const closeLightbox = () => {
-  lightboxImage.value = null;
 };
 
 onMounted(() => load(props.subId));
@@ -73,6 +261,24 @@ watch(
 
       <template v-else>
         <!-- Gallery -->
+        <button
+          @click="goHome"
+          class="cursor-pointer inline-flex items-center mb-5 gap-2 rounded-lg border border-amber-500 px-5 py-2.5 text-amber-400 transition hover:bg-amber-500 hover:text-black"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
+
+          Back to Home
+        </button>
         <header class="section-heading">
           <span class="eyebrow">Portfolio</span>
           <h1>Gallery</h1>
@@ -80,11 +286,11 @@ watch(
 
         <div v-if="images.length" class="gallery-grid">
           <button
-            v-for="img in images"
+            v-for="(img, i) in images"
             :key="img.id"
             class="gallery-tile"
             type="button"
-            @click="openLightbox(img)"
+            @click="openLightbox(i)"
           >
             <img :src="img.image" :alt="img.title" loading="lazy" />
             <span v-if="img.title" class="gallery-tile-caption">{{
@@ -103,15 +309,29 @@ watch(
         </header>
 
         <div v-if="reels.length" class="reels-grid">
-          <div v-for="reel in reels" :key="reel.id" class="reel-card">
-            <iframe
-              :src="reel.embed_url"
-              :title="reel.title"
-              allowfullscreen
+          <button
+            v-for="(reel, i) in reels"
+            :key="reel.id"
+            class="reel-thumb-tile"
+            type="button"
+            @click="openReel(i)"
+          >
+            <img
+              v-if="reel.thumbnail"
+              :src="reel.thumbnail"
+              :alt="reel.title"
               loading="lazy"
             />
-            <span v-if="reel.title" class="reel-caption">{{ reel.title }}</span>
-          </div>
+            <span v-else class="reel-thumb-fallback" aria-hidden="true"
+              >🎬</span
+            >
+
+            <span class="reel-thumb-play" aria-hidden="true">▶</span>
+
+            <span v-if="reel.title" class="reel-thumb-caption">{{
+              reel.title
+            }}</span>
+          </button>
         </div>
         <div v-else class="state-card">
           <p>No reels yet.</p>
@@ -119,7 +339,7 @@ watch(
       </template>
     </div>
 
-    <!-- Lightbox -->
+    <!-- Gallery Lightbox -->
     <Teleport to="body">
       <div
         v-if="lightboxImage"
@@ -129,12 +349,95 @@ watch(
         <button class="lightbox-close" type="button" @click="closeLightbox">
           &times;
         </button>
+
+        <button
+          v-if="images.length > 1"
+          class="lightbox-nav lightbox-prev"
+          type="button"
+          aria-label="Previous image"
+          @click.stop="prevImage"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="1.5em"
+            height="1.5em"
+            viewBox="0 0 24 24"
+          >
+            <path d="M0 0h24v24H0z" fill="none" />
+            <path fill="currentColor" d="m14 17l-5-5l5-5z" />
+          </svg>
+        </button>
+
         <img
           :src="lightboxImage.image"
           :alt="lightboxImage.title"
           class="lightbox-image"
           @click.stop
         />
+
+        <button
+          v-if="images.length > 1"
+          class="lightbox-nav lightbox-next"
+          type="button"
+          aria-label="Next image"
+          @click.stop="nextImage"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="1.5em"
+            height="1.5em"
+            viewBox="0 0 24 24"
+          >
+            <path d="M0 0h24v24H0z" fill="none" />
+            <path fill="currentColor" d="M10 17V7l5 5z" />
+          </svg>
+        </button>
+      </div>
+    </Teleport>
+
+    <!-- Reel feed modal (TikTok-style) -->
+    <Teleport to="body">
+      <div
+        v-if="reelModalOpen"
+        class="reel-modal-backdrop"
+        @click.self="closeReelModal"
+      >
+        <button
+          class="reel-modal-close"
+          type="button"
+          aria-label="Close reels"
+          @click="closeReelModal"
+        >
+          &times;
+        </button>
+
+        <div
+          ref="reelFeedRef"
+          class="reel-feed"
+          tabindex="0"
+          role="group"
+          aria-label="Reels feed, use arrow up and down keys to navigate"
+          @keydown="onFeedKeydown"
+          @click.stop
+        >
+          <div
+            v-for="(reel, i) in reels"
+            :key="reel.id"
+            class="reel-feed-item"
+            :ref="(el) => setReelItemRef(el, i)"
+          >
+            <iframe
+              v-if="reelSrc(i, reel.embed_url)"
+              :src="reelSrc(i, reel.embed_url)"
+              :title="reel.title"
+              loading="lazy"
+              allow="autoplay; encrypted-media; picture-in-picture"
+            />
+            <span v-if="reel.title" class="reel-feed-caption">{{
+              reel.title
+            }}</span>
+          </div>
+        </div>
       </div>
     </Teleport>
   </section>
@@ -177,15 +480,22 @@ watch(
   margin: 0;
 }
 
-/* Gallery */
+/* ---------- Gallery ---------- */
 .gallery-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
   gap: 1rem;
+  padding-bottom: 0.5rem;
+  scrollbar-width: thin;
 }
 
 .gallery-tile {
   position: relative;
+  flex: 0 0 auto;
+  width: clamp(220px, 22vw, 320px);
   aspect-ratio: 1 / 1;
   border-radius: 12px;
   overflow: hidden;
@@ -193,6 +503,7 @@ watch(
   padding: 0;
   cursor: pointer;
   background: #1a1a1c;
+  scroll-snap-align: start;
 }
 
 .gallery-tile img {
@@ -228,34 +539,92 @@ watch(
   opacity: 1;
 }
 
-/* Reels */
-.reels-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 1.5rem;
+/* Mobile: narrower tiles, captions always visible (no hover on touch) */
+@media (max-width: 640px) {
+  .gallery-tile {
+    width: 72vw;
+    max-width: 300px;
+  }
+
+  .gallery-tile-caption {
+    opacity: 1;
+  }
 }
 
-.reel-card {
-  border-radius: 12px;
+/* ---------- Reel thumbnails ---------- */
+.reels-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.reel-thumb-tile {
+  position: relative;
+  aspect-ratio: 9 / 16;
+  border-radius: 14px;
   overflow: hidden;
+  border: none;
+  padding: 0;
+  cursor: pointer;
   background: #1a1a1c;
 }
 
-.reel-card iframe {
+.reel-thumb-tile img {
   width: 100%;
-  aspect-ratio: 9 / 16;
-  border: none;
-  display: block;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
 }
 
-.reel-caption {
-  display: block;
-  padding: 0.65rem 0.85rem;
-  font-size: 0.9rem;
-  color: #b8b4ab;
+.reel-thumb-tile:hover img {
+  transform: scale(1.06);
 }
 
-/* Skeletons */
+.reel-thumb-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 2rem;
+  color: #555;
+}
+
+.reel-thumb-play {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  color: #f5f2ec;
+  background: rgba(0, 0, 0, 0.25);
+  opacity: 0.9;
+  transition: opacity 0.25s ease;
+}
+
+.reel-thumb-tile:hover .reel-thumb-play {
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.reel-thumb-caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0.5rem 0.6rem;
+  font-size: 0.8rem;
+  color: #f5f2ec;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.75) 100%
+  );
+  text-align: left;
+}
+
+/* ---------- Skeletons ---------- */
 .skeleton-tile {
   aspect-ratio: 1 / 1;
   border-radius: 12px;
@@ -273,7 +642,7 @@ watch(
   }
 }
 
-/* States */
+/* ---------- States ---------- */
 .state-card {
   padding: 3rem;
   text-align: center;
@@ -288,7 +657,7 @@ watch(
   border-color: rgba(224, 122, 95, 0.35);
 }
 
-/* Lightbox */
+/* ---------- Gallery Lightbox ---------- */
 .lightbox-backdrop {
   position: fixed;
   inset: 0;
@@ -317,5 +686,145 @@ watch(
   font-size: 2.5rem;
   line-height: 1;
   cursor: pointer;
+}
+
+.lightbox-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  color: #f5f2ec;
+  font-size: 2rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+
+.lightbox-nav:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.lightbox-prev {
+  left: 1.5rem;
+}
+
+.lightbox-next {
+  right: 1.5rem;
+}
+
+@media (max-width: 640px) {
+  .lightbox-nav {
+    width: 40px;
+    height: 40px;
+    font-size: 1.5rem;
+  }
+
+  .lightbox-prev {
+    left: 0.5rem;
+  }
+
+  .lightbox-next {
+    right: 0.5rem;
+  }
+}
+
+/* ---------- Reel feed modal (TikTok style) ---------- */
+.reel-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem clamp(1rem, 4vw, 3rem);
+}
+
+.reel-modal-close {
+  position: fixed;
+  top: 1.25rem;
+  right: 1.25rem;
+  z-index: 210;
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  color: #f5f2ec;
+  font-size: 1.75rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.reel-feed {
+  position: relative;
+  width: min(420px, 92vw);
+  height: min(88vh, 760px);
+  border-radius: 24px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scroll-snap-type: y mandatory;
+  -webkit-overflow-scrolling: touch;
+  background: #000;
+  outline: none;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+  scrollbar-width: none;
+}
+
+.reel-feed::-webkit-scrollbar {
+  display: none;
+}
+
+.reel-feed-item {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  background: #000;
+}
+
+.reel-feed-item iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+
+.reel-feed-caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 1rem 1.1rem;
+  font-size: 0.95rem;
+  color: #f5f2ec;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.75) 100%
+  );
+  pointer-events: none;
+}
+
+/* Mobile: feed takes over almost the full screen, thin edge remains
+   visible so tapping outside still closes it */
+@media (max-width: 640px) {
+  .reel-modal-backdrop {
+    padding: 0.75rem;
+  }
+
+  .reel-feed {
+    width: 100%;
+    height: 100%;
+    border-radius: 16px;
+  }
 }
 </style>

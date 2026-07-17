@@ -25,15 +25,15 @@ function goBack() {
 
 <template>
   <section class="space-y-6">
-    <div class="flex items-center justify-between">
+    <div class="flex flex-wrap items-center justify-between gap-3">
       <div>
-        <h1 class="text-3xl font-bold">Show Details</h1>
+        <h1 class="text-2xl font-bold sm:text-3xl">Show Details</h1>
 
-        <p class="text-gray-500">View show information.</p>
+        <p class="text-sm text-gray-500 sm:text-base">View show information.</p>
       </div>
 
       <button
-        class="rounded-lg bg-zinc-800 px-5 py-2 text-white transition hover:bg-zinc-700"
+        class="rounded-lg bg-zinc-800 px-4 py-2 text-sm text-white transition hover:bg-zinc-700 sm:px-5 sm:text-base"
         @click="goBack"
       >
         Back
@@ -51,14 +51,14 @@ function goBack() {
       <img
         :src="currentShow.image"
         :alt="currentShow.title"
-        class="h-80 w-full object-cover"
+        class="h-48 w-full object-cover sm:h-64 md:h-80"
       />
 
-      <div class="grid gap-6 p-8 md:grid-cols-2">
+      <div class="grid gap-6 p-5 sm:p-8 md:grid-cols-2">
         <div>
           <p class="text-sm text-gray-500">Title</p>
 
-          <h3 class="font-semibold">
+          <h3 class="font-semibold break-words">
             {{ currentShow.title }}
           </h3>
         </div>
@@ -66,7 +66,7 @@ function goBack() {
         <div>
           <p class="text-sm text-gray-500">City</p>
 
-          <h3 class="font-semibold">
+          <h3 class="font-semibold break-words">
             {{ currentShow.city }}
           </h3>
         </div>
@@ -74,7 +74,7 @@ function goBack() {
         <div>
           <p class="text-sm text-gray-500">Location</p>
 
-          <h3 class="font-semibold">
+          <h3 class="font-semibold break-words">
             {{ currentShow.location }}
           </h3>
         </div>
@@ -82,7 +82,7 @@ function goBack() {
         <div>
           <p class="text-sm text-gray-500">Date</p>
 
-          <h3 class="font-semibold">
+          <h3 class="font-semibold break-words">
             {{ currentShow.date }}
           </h3>
         </div>

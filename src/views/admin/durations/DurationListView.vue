@@ -49,13 +49,13 @@ async function deleteDuration(id: number) {
 </script>
 
 <template>
-  <div class="p-6">
-    <div class="mb-6 flex items-center justify-between">
-      <h1 class="text-2xl font-bold text-white">Duration Options</h1>
+  <div class="p-4 sm:p-6">
+    <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+      <h1 class="text-xl font-bold text-white sm:text-2xl">Duration Options</h1>
 
       <RouterLink
         :to="{ name: 'admin-duration-create' }"
-        class="rounded-lg bg-yellow-500 px-4 py-2 font-semibold text-black transition hover:bg-yellow-400"
+        class="rounded-lg bg-yellow-500 px-4 py-2 text-sm font-semibold text-black transition hover:bg-yellow-400 sm:text-base"
       >
         Add Duration
       </RouterLink>
@@ -63,77 +63,132 @@ async function deleteDuration(id: number) {
 
     <div v-if="loading" class="py-10 text-center text-gray-300">Loading...</div>
 
-    <div v-else class="overflow-x-auto rounded-xl bg-[#171717]">
-      <table class="w-full">
-        <thead class="bg-[#222] text-gray-300">
-          <tr>
-            <th class="p-4 text-left">ID</th>
-            <th class="p-4 text-left">Title</th>
-            <th class="p-4 text-left">Minutes</th>
-            <th class="p-4 text-left">Sub Category</th>
-            <th class="p-4 text-center">Actions</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          <tr
-            v-for="duration in durations"
-            :key="duration.id"
-            class="border-t border-gray-800"
-          >
-            <td class="p-4 text-white">
-              {{ duration.id }}
-            </td>
-
-            <td class="p-4 text-white">
-              {{ duration.title }}
-            </td>
-
-            <td class="p-4 text-gray-300">{{ duration.minutes }} min</td>
-
-            <td class="p-4 text-gray-300">
-              {{ duration.sub_category_name }}
-            </td>
-
-            <td class="p-4">
-              <div class="flex justify-center gap-3">
-                <RouterLink
-                  :to="{
-                    name: 'admin-duration-details',
-                    params: { id: duration.id },
-                  }"
-                  class="rounded bg-slate-600 px-3 py-1 hover:bg-slate-500"
-                >
-                  View
-                </RouterLink>
-
-                <RouterLink
-                  :to="{
-                    name: 'admin-duration-edit',
-                    params: { id: duration.id },
-                  }"
-                  class="rounded bg-blue-600 px-3 py-1 hover:bg-blue-500"
-                >
-                  Edit
-                </RouterLink>
-
-                <button
-                  @click="deleteDuration(duration.id)"
-                  class="rounded bg-red-600 px-3 py-1 hover:bg-red-500"
-                >
-                  Delete
-                </button>
-              </div>
-            </td>
-          </tr>
-
-          <tr v-if="durations.length === 0">
-            <td colspan="5" class="py-10 text-center text-gray-500">
-              No Duration Options Found.
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <div
+      v-else-if="durations.length === 0"
+      class="rounded-xl bg-[#171717] py-10 text-center text-gray-500"
+    >
+      No Duration Options Found.
     </div>
+
+    <template v-else>
+      <!-- Mobile: stacked cards -->
+      <div class="grid gap-4 sm:hidden">
+        <div
+          v-for="duration in durations"
+          :key="duration.id"
+          class="rounded-xl bg-[#171717] p-4"
+        >
+          <div class="flex items-start justify-between gap-2">
+            <p class="text-xs text-gray-500">#{{ duration.id }}</p>
+            <p class="text-xs text-gray-500">{{ duration.minutes }} min</p>
+          </div>
+
+          <p class="mt-2 font-medium text-white">
+            {{ duration.title }}
+          </p>
+
+          <p class="mt-1 text-sm text-gray-400">
+            {{ duration.sub_category_name }}
+          </p>
+
+          <div class="mt-4 flex gap-2">
+            <RouterLink
+              :to="{
+                name: 'admin-duration-details',
+                params: { id: duration.id },
+              }"
+              class="flex-1 rounded bg-slate-600 px-3 py-2 text-center text-sm hover:bg-slate-500"
+            >
+              View
+            </RouterLink>
+
+            <RouterLink
+              :to="{
+                name: 'admin-duration-edit',
+                params: { id: duration.id },
+              }"
+              class="flex-1 rounded bg-blue-600 px-3 py-2 text-center text-sm hover:bg-blue-500"
+            >
+              Edit
+            </RouterLink>
+
+            <button
+              @click="deleteDuration(duration.id)"
+              class="flex-1 rounded bg-red-600 px-3 py-2 text-sm hover:bg-red-500"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- sm and up: table -->
+      <div class="hidden overflow-x-auto rounded-xl bg-[#171717] sm:block">
+        <table class="w-full">
+          <thead class="bg-[#222] text-gray-300">
+            <tr>
+              <th class="p-4 text-left">ID</th>
+              <th class="p-4 text-left">Title</th>
+              <th class="p-4 text-left">Minutes</th>
+              <th class="p-4 text-left">Sub Category</th>
+              <th class="p-4 text-center">Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr
+              v-for="duration in durations"
+              :key="duration.id"
+              class="border-t border-gray-800"
+            >
+              <td class="p-4 text-white">
+                {{ duration.id }}
+              </td>
+
+              <td class="p-4 text-white">
+                {{ duration.title }}
+              </td>
+
+              <td class="p-4 text-gray-300">{{ duration.minutes }} min</td>
+
+              <td class="p-4 text-gray-300">
+                {{ duration.sub_category_name }}
+              </td>
+
+              <td class="p-4">
+                <div class="flex justify-center gap-3">
+                  <RouterLink
+                    :to="{
+                      name: 'admin-duration-details',
+                      params: { id: duration.id },
+                    }"
+                    class="rounded bg-slate-600 px-3 py-1 hover:bg-slate-500"
+                  >
+                    View
+                  </RouterLink>
+
+                  <RouterLink
+                    :to="{
+                      name: 'admin-duration-edit',
+                      params: { id: duration.id },
+                    }"
+                    class="rounded bg-blue-600 px-3 py-1 hover:bg-blue-500"
+                  >
+                    Edit
+                  </RouterLink>
+
+                  <button
+                    @click="deleteDuration(duration.id)"
+                    class="rounded bg-red-600 px-3 py-1 hover:bg-red-500"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </template>
   </div>
 </template>

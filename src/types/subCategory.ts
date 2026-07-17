@@ -13,7 +13,7 @@ export interface SubCategory {
 
   min_members: number;
   max_members: number;
-
+  is_custom: boolean;
   rules: Rule[];
   duration: DurationOption[];
 }

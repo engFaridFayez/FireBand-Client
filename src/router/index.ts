@@ -300,6 +300,44 @@ const router = createRouter({
           component: TeamEditView,
         },
 
+        //Gallery
+        {
+          path: "/admin/gallery",
+          name: "gallery-list",
+          component: () => import("@/views/admin/gallery/GalleryListView.vue"),
+        },
+
+        {
+          path: "/admin/gallery/create",
+          name: "gallery-create",
+          component: () => import("@/views/admin/gallery/GalleryCreateView.vue"),
+        },
+
+        {
+          path: "/admin/gallery/:id/edit",
+          name: "gallery-edit",
+          component: () => import("@/views/admin/gallery/GalleryEditView.vue"),
+        },
+
+        //Reels
+        {
+          path: "/admin/reels",
+          name: "reel-list",
+          component: () => import("@/views/admin/reels/ReelListView.vue"),
+        },
+
+        {
+          path: "/admin/reels/create",
+          name: "reel-create",
+          component: () => import("@/views/admin/reels/ReelCreateView.vue"),
+        },
+
+        {
+          path: "/admin/reels/:id/edit",
+          name: "reel-edit",
+          component: () => import("@/views/admin/reels/ReelEditView.vue"),
+        },
+
       ],
     },
 
