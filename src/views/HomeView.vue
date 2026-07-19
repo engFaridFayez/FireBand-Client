@@ -12,6 +12,10 @@ import { useAudioStore } from "@/stores/audio";
 import { useHomeStore } from "@/stores/home";
 import { storeToRefs } from "pinia";
 import { RouterLink } from "vue-router";
+import Footer from "@/components/Footer.vue";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 const homeStore = useHomeStore();
 
 const { shows, team } = storeToRefs(homeStore);
@@ -69,30 +73,43 @@ onBeforeUnmount(() => {
 
     <section class="hero-section" id="hero" aria-labelledby="hero-title">
       <div class="hero-copy">
-        <p class="eyebrow">Public debut season 2026</p>
-        <h1 id="hero-title">Fireband</h1>
+        <p class="eyebrow">
+          {{ t("home-page.hero.title1") }}
+        </p>
+
+        <h1 id="hero-title ">
+          {{ t("home-page.hero.main-title") }}
+        </h1>
+
         <p class="hero-lede">
-          A live band built for bright choruses, electric drums, and rooms that
-          move together.
+          {{ t("home-page.hero.subtitle") }}
         </p>
 
         <div class="hero-actions">
-          <a class="primary-action" href="#booking">Book the band</a>
+          <a class="primary-action" href="#booking">
+            {{ t("home-page.hero.button-Book") }}
+          </a>
+
           <button class="secondary-action" @click="audio.play">
-            Hear the sound
+            {{ t("home-page.hero.button-hear") }}
           </button>
         </div>
 
         <div class="stats-strip" aria-label="Fireband highlights">
-          <span class="reveal-card reveal-up" style="--reveal-delay: 80ms"
-            ><strong>4</strong> performers</span
-          >
-          <span class="reveal-card reveal-up" style="--reveal-delay: 180ms"
-            ><strong>18</strong> songs</span
-          >
-          <span class="reveal-card reveal-up" style="--reveal-delay: 280ms"
-            ><strong>90</strong> min set</span
-          >
+          <span class="reveal-card reveal-up" style="--reveal-delay: 80ms">
+            <strong>4</strong>
+            {{ t("home-page.hero.performance") }}
+          </span>
+
+          <span class="reveal-card reveal-up" style="--reveal-delay: 180ms">
+            <strong>18</strong>
+            {{ t("home-page.hero.songs") }}
+          </span>
+
+          <span class="reveal-card reveal-up" style="--reveal-delay: 280ms">
+            <strong>90</strong>
+            {{ t("home-page.hero.min-set") }}
+          </span>
         </div>
       </div>
 
@@ -118,15 +135,16 @@ onBeforeUnmount(() => {
       </figure>
 
       <div class="about-copy">
-        <p class="eyebrow">About Fireband</p>
+        <p class="eyebrow">
+          {{ t("home-page.about.title") }}
+        </p>
+
         <h2 id="about-title">
-          A public show made to feel close, loud, and unforgettable.
+          {{ t("home-page.about.content") }}
         </h2>
+
         <p>
-          Fireband blends rock drive, pop melodies, and glowing synth textures
-          into a live set built for festivals, private events, and headline
-          nights. Every song is arranged for movement: big vocal moments, sharp
-          guitar lines, deep drums, and a crowd-first stage presence.
+          {{ t("home-page.about.footer") }}
         </p>
       </div>
     </section>
@@ -137,24 +155,31 @@ onBeforeUnmount(() => {
       aria-labelledby="music-title"
     >
       <div>
-        <p class="eyebrow">Signature sound</p>
-        <h2 id="music-title">Rock energy, pop hooks, stage-fire rhythm.</h2>
+        <p class="eyebrow">
+          {{ t("home-page.music.title") }}
+        </p>
+
+        <h2 id="music-title">
+          {{ t("home-page.music.content") }}
+        </h2>
       </div>
       <div class="track-list">
         <article class="reveal-card reveal-left" style="--reveal-delay: 80ms">
           <span>01</span>
-          <strong>Burn The Night</strong>
-          <small>Festival opener</small>
+          <strong>{{ t("home-page.music.sections.1.title") }}</strong>
+          <small>{{ t("home-page.music.sections.1.content") }}</small>
         </article>
+
         <article class="reveal-card reveal-left" style="--reveal-delay: 180ms">
           <span>02</span>
-          <strong>Neon Pulse</strong>
-          <small>Synth-rock single</small>
+          <strong>{{ t("home-page.music.sections.2.title") }}</strong>
+          <small>{{ t("home-page.music.sections.2.content") }}</small>
         </article>
+
         <article class="reveal-card reveal-left" style="--reveal-delay: 280ms">
           <span>03</span>
-          <strong>Ashes To Gold</strong>
-          <small>Big final chorus</small>
+          <strong>{{ t("home-page.music.sections.3.title") }}</strong>
+          <small>{{ t("home-page.music.sections.3.content") }}</small>
         </article>
       </div>
     </section>
@@ -165,8 +190,13 @@ onBeforeUnmount(() => {
       aria-labelledby="shows-title"
     >
       <div class="section-heading">
-        <p class="eyebrow">Upcoming shows</p>
-        <h2 id="shows-title">Catch the next spark.</h2>
+        <p class="eyebrow">
+          {{ t("home-page.shows.title") }}
+        </p>
+
+        <h2 id="shows-title">
+          {{ t("home-page.shows.content") }}
+        </h2>
       </div>
 
       <article
@@ -193,8 +223,13 @@ onBeforeUnmount(() => {
       aria-labelledby="team-title"
     >
       <div class="section-heading">
-        <p class="eyebrow">The team</p>
-        <h2 id="team-title">Four musicians. One loud heartbeat.</h2>
+        <p class="eyebrow">
+          {{ t("home-page.team.title") }}
+        </p>
+
+        <h2 id="team-title">
+          {{ t("home-page.team.content") }}
+        </h2>
       </div>
 
       <div class="member-grid">
@@ -219,17 +254,43 @@ onBeforeUnmount(() => {
       aria-labelledby="booking-title"
     >
       <div>
-        <p class="eyebrow">Booking</p>
-        <h2 id="booking-title">Bring Fireband to the stage.</h2>
-        <p>Reserve your date and let us create an unforgettable performance.</p>
+        <p class="eyebrow">
+          {{ t("home-page.booking.title") }}
+        </p>
+
+        <h2 id="booking-title">
+          {{ t("home-page.booking.content") }}
+        </h2>
+
+        <p>
+          {{ t("home-page.booking.content2") }}
+        </p>
       </div>
 
-      <RouterLink class="primary-action" to="/booking"> Book Now </RouterLink>
+      <RouterLink class="primary-action" to="/booking">
+        {{ t("home-page.booking.button") }}
+      </RouterLink>
     </section>
+    <Footer
+      :theme="theme"
+      @toggle-theme="theme = theme === 'dark' ? 'light' : 'dark'"
+    />
   </main>
 </template>
 
 <style scoped>
+/* Arabic needs a taller line box so descenders aren't clipped */
+h1:lang(ar) {
+  line-height: 1.35;
+  letter-spacing: 0;
+  padding-bottom: 0.08em;
+  white-space: normal; /* allow wrap if the Arabic string is longer/shorter than English */
+}
+
+/* Also apply to h2 if you reuse it for Arabic headings */
+h2:lang(ar) {
+  line-height: 1.3;
+}
 .fireband-page {
   --bg: #08070a;
   --surface: #111014;

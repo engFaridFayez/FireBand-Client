@@ -1,0 +1,150 @@
+{
+  "home-page": {
+    "nav": {
+      "home": "Home",
+      "about": "About",
+      "shows": "Shows",
+      "band": "Band",
+      "portfolio": "Portfolio",
+      "booking": "Booking",
+      "hello": "Hello",
+      "dashboard": "Dashboard",
+      "login": "Login",
+      "Logout": "Logout",
+      "themeL": "Light L",
+      "themeD": "Dark D",
+      "themeLight": "Switch to light mode",
+      "themeDark": "Switch to dark mode",
+      "playMusic": "Play music",
+      "muteMusic": "Mute music",
+      "toggleMenu": "Toggle navigation menu"
+    },
+    "hero": {
+      "title1": "Public debut season 2026",
+      "main-title": "FIREBAND",
+      "subtitle": "A live band built for bright choruses, electric drums, and rooms that move together.",
+      "button-hear": "Hear the sound",
+      "button-Book": "Book the band",
+      "performance": "Performance",
+      "songs": "Songs",
+      "min-set": "Min Set"
+    },
+    "about": {
+      "title": "ABOUT FIREBAND",
+      "content": "A public show made to feel close, loud, and unforgettable.",
+      "footer": "Fireband blends rock drive, pop melodies, and glowing synth textures into a live set built for festivals, private events, and headline nights. Every song is arranged for movement: big vocal moments, sharp guitar lines, deep drums, and a crowd-first stage presence."
+    },
+    "music": {
+      "title": "Signature sound",
+      "content": "Rock energy, pop hooks, stage-fire rhythm.",
+      "sections": {
+        "1": {
+          "title": "Burn The Night",
+          "content": "Festival opener"
+        },
+        "2": {
+          "title": "Neon Pulse",
+          "content": "Synth-rock single"
+        },
+        "3": {
+          "title": "Ashes To Gold",
+          "content": "Big final chorus"
+        }
+      }
+    },
+    "shows": {
+      "title": "Upcoming shows",
+      "content": "Catch the next spark."
+    },
+    "team": {
+      "title": "THE TEAM",
+      "content": "musicians. One loud heartbeat."
+    },
+    "booking": {
+      "title": "BOOKING",
+      "content": "Bring Fireband to the stage.",
+      "content2": "Reserve your date and let us create an unforgettable performance.",
+      "button": "Book Now"
+    },
+    "footer": {
+      "section1": {
+        "title": "Fireband",
+        "main": "FIRE ON STAGE",
+        "content": "Fire performers and flow artists for weddings, festivals, and private events. We bring the flame, you bring the crowd."
+      },
+      "section2": {
+        "title": "Explore",
+        "home": "Home",
+        "about": "About",
+        "shows": "Shows",
+        "band": "Band",
+        "portfolio": "Portfolio",
+        "booking": "Booking"
+      },
+      "section3": {
+        "title": "Get in Touch",
+        "email": "hello{'@'}fireband.com",
+        "phone": "+1 (000) 000-0000",
+        "button": "Book Fireband"
+      }
+    }
+  },
+  "booking-page": {
+    "section1": {
+      "title": "BOOKING",
+      "main-title": "BOOK FIREBAND",
+      "content": "Reserve your date and let us bring the fire to your stage. Fill in the details and we'll confirm within one business day.",
+      "progress": {
+        "title": "FORM PROGRESS",
+        "sub-1": "Contact details",
+        "sub-2": "Performance selection",
+        "sub-3": "Event details"
+      }
+    },
+    "form": {
+      "section-1": {
+        "head": "CONTACT",
+        "labels": {
+          "full-name": "Full Name",
+          "phone": "Phone",
+          "email": "Email",
+          "optional": "optional"
+        },
+        "placeholders": {
+          "full-name": "Full Name",
+          "phone": "Phone",
+          "email": "Email"
+        }
+      },
+      "section-2": {
+        "head": "Performance",
+        "labels": {
+          "event-category": "Event Category",
+          "sub-category": "Sub Category",
+          "duration": "Duration"
+        },
+        "placeholders": {
+          "event-category": "Select Category",
+          "sub-category": "Select Sub Category",
+          "duration": "Select Duration"
+        },
+        "before-you-book":"Before You Book!!"
+      },
+      "section-3": {
+        "head": "Event Details",
+        "labels": {
+          "event-date": "Event Date",
+          "event-time": "Event Time",
+          "location": "Location",
+          "team-tembers": "Team Members",
+          "notes": "Notes"
+        },
+        "placeholders": {
+          "location": "Location",
+          "notes": "Anything else we should know?"
+        }
+      },
+      "button": "Send Booking Request"
+    }
+  }
+}

@@ -7,7 +7,11 @@ import { useRouter } from "vue-router";
 import { ref, onMounted, onUnmounted, nextTick } from "vue";
 import { useAudioStore } from "@/stores/audio";
 import { useCategoryStore } from "@/stores/category";
+import { useLanguageStore } from "@/stores/language";
+import { useI18n } from "vue-i18n";
 
+const { t } = useI18n();
+const languageStore = useLanguageStore();
 const categoryStore = useCategoryStore();
 
 const { categories } = storeToRefs(categoryStore);
@@ -131,23 +135,29 @@ onUnmounted(() => {
       :class="{ 'nav-links-open': menuOpen }"
       aria-label="Main navigation"
     >
-      <a href="#hero" class="nav-link" @click.prevent="scrollToSection('hero')"
-        >Home</a
+      <a
+        href="#hero"
+        class="nav-link"
+        @click.prevent="scrollToSection('hero')"
+        >{{ t("home-page.nav.home") }}</a
       >
       <a
         href="#about"
         class="nav-link"
         @click.prevent="scrollToSection('about')"
-        >About</a
+        >{{ t("home-page.nav.about") }}</a
       >
       <a
         href="#shows"
         class="nav-link"
         @click.prevent="scrollToSection('shows')"
-        >Shows</a
+        >{{ t("home-page.nav.shows") }}</a
       >
-      <a href="#team" class="nav-link" @click.prevent="scrollToSection('team')"
-        >Band</a
+      <a
+        href="#team"
+        class="nav-link"
+        @click.prevent="scrollToSection('team')"
+        >{{ t("home-page.nav.band") }}</a
       >
       <div class="nav-menu" :class="{ 'is-open': musicMenuOpen }">
         <button
@@ -157,7 +167,7 @@ onUnmounted(() => {
           :aria-expanded="musicMenuOpen"
           @click="toggleMusicMenu"
         >
-          Portfolio
+          {{ t("home-page.nav.portfolio") }}
           <span aria-hidden="true">v</span>
         </button>
         <div class="nav-dropdown" aria-label="Music event types">
@@ -177,8 +187,11 @@ onUnmounted(() => {
           </RouterLink>
         </div>
       </div>
-      <RouterLink class="nav-link nav-primary" to="/booking" @click="closeMenu"
-        >Booking</RouterLink
+      <RouterLink
+        class="nav-link nav-primary"
+        to="/booking"
+        @click="closeMenu"
+        >{{ t("home-page.nav.booking") }}</RouterLink
       >
       <div
         v-if="authStore.access && authStore.user"
@@ -188,7 +201,7 @@ onUnmounted(() => {
           class="rounded-full border border-orange-500/20 bg-orange-500/10 px-4 py-2 backdrop-blur-md"
         >
           <span class="text-sm font-medium text-orange-300">
-            Hello,
+            {{ t("home-page.nav.hello") }},
             <span class="font-bold text-white">
               {{ authStore.user.username }}
             </span>
@@ -201,14 +214,14 @@ onUnmounted(() => {
           class="rounded-full border border-yellow-500/20 bg-yellow-500/10 px-4 py-2 text-sm font-semibold text-yellow-300 transition-all duration-300 hover:bg-yellow-500 hover:text-black"
           @click="closeMenu"
         >
-          Dashboard
+          {{ t("home-page.nav.dashboard") }}
         </RouterLink>
 
         <button
           @click="handleLogout"
           class="rounded-full border border-red-500/20 bg-red-500/10 px-4 py-2 text-sm font-semibold text-red-300 transition-all duration-300 hover:bg-red-500 hover:text-white"
         >
-          Logout
+          {{ t("home-page.nav.Logout") }}
         </button>
       </div>
 
@@ -218,7 +231,7 @@ onUnmounted(() => {
           class="rounded-full border border-orange-500/20 bg-orange-500/10 px-5 py-2 text-sm font-semibold text-orange-300 transition-all duration-300 hover:bg-orange-500 hover:text-white"
           @click="closeMenu"
         >
-          Login
+          {{ t("home-page.nav.login") }}
         </RouterLink>
       </div>
     </nav>
@@ -227,7 +240,11 @@ onUnmounted(() => {
       <button
         class="audio-toggle"
         type="button"
-        :aria-label="audio.isPlaying ? 'Mute music' : 'Play music'"
+        :aria-label="
+          audio.isPlaying
+            ? t('home-page.nav.muteMusic')
+            : t('home-page.nav.playMusic')
+        "
         @click="audio.toggle"
       >
         <svg
@@ -279,22 +296,52 @@ onUnmounted(() => {
         class="theme-toggle"
         type="button"
         :aria-label="
-          theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'
+          theme === 'dark'
+            ? t('home-page.nav.themeLight')
+            : t('home-page.nav.themeDark')
         "
         @click="$emit('toggleTheme')"
       >
-        <span class="toggle-icon" aria-hidden="true">{{
-          theme === "dark" ? "L" : "D"
-        }}</span>
         <span>{{ theme === "dark" ? "Light" : "Dark" }}</span>
       </button>
-
+      <button
+        class="lang-toggle"
+        type="button"
+        :aria-label="
+          languageStore.locale === 'ar'
+            ? t('home-page.nav.switchToEnglish')
+            : t('home-page.nav.switchToArabic')
+        "
+        @click="languageStore.toggleLanguage()"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="1.1em"
+          height="1.1em"
+          viewBox="0 0 24 24"
+          fill="none"
+        >
+          <circle
+            cx="12"
+            cy="12"
+            r="9"
+            stroke="currentColor"
+            stroke-width="1.6"
+          />
+          <path
+            d="M3 12h18M12 3c2.5 2.7 3.8 6 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-6-3.8-9s1.3-6.3 3.8-9Z"
+            stroke="currentColor"
+            stroke-width="1.6"
+          />
+        </svg>
+        <span>{{ languageStore.locale === "ar" ? "EN" : "AR" }}</span>
+      </button>
       <button
         class="menu-toggle"
         type="button"
         :aria-expanded="menuOpen"
         aria-controls="primary-navigation"
-        aria-label="Toggle navigation menu"
+        :aria-label="t('home-page.nav.toggleMenu')"
         @click="toggleMenu"
       >
         <span class="menu-icon" :class="{ 'is-open': menuOpen }">
@@ -640,14 +687,14 @@ onUnmounted(() => {
     z-index: 999;
 
     flex-direction: column;
-    flex-wrap: nowrap;  
+    flex-wrap: nowrap;
     align-items: stretch;
     justify-content: flex-start;
     gap: 4px;
 
     max-height: calc(100vh - 110px);
     overflow-y: auto;
-    overflow-x: hidden;  
+    overflow-x: hidden;
 
     padding: 12px;
     border: 1px solid var(--line);
