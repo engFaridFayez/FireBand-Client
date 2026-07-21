@@ -17,7 +17,9 @@
       "themeDark": "التبديل إلى الوضع الداكن",
       "playMusic": "تشغيل الموسيقى",
       "muteMusic": "إيقاف الموسيقى",
-      "toggleMenu": "فتح أو إغلاق القائمة"
+      "toggleMenu": "فتح أو إغلاق القائمة",
+      "switchToArabic": "العربية",
+      "switchToEnglish": "English"
     },
     "hero": {
       "title1": "الموسم الأول للعروض العامة 2026",
@@ -128,7 +130,7 @@
           "sub-category": "اختر نوع العرض",
           "duration": "اختر المدة"
         },
-        "before-you-book":"قبل الحجز !!!"
+        "before-you-book": "قبل الحجز !!!"
       },
       "section-3": {
         "head": "تفاصيل الفعالية",

@@ -835,7 +835,7 @@ h2 {
 
 .member-card {
   min-height: 220px;
-  padding: 18px;
+  padding: 10px;
   background:
     linear-gradient(180deg, transparent, rgba(255, 75, 18, 0.14)), var(--soft);
 }
@@ -845,12 +845,13 @@ h2 {
   place-items: center;
   width: 64px;
   height: 64px;
-  margin-bottom: 72px;
+  margin-bottom: 10px;
   border-radius: 8px;
   color: #130905;
   font-size: 0.8rem;
   font-weight: 950;
-  background: linear-gradient(135deg, var(--gold), var(--cyan));
+  background: linear-gradient(135deg, var(--gold), var(--fire));
+  text-align: center;
 }
 
 .member-card strong,

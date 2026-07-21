@@ -17,7 +17,9 @@
       "themeDark": "Switch to dark mode",
       "playMusic": "Play music",
       "muteMusic": "Mute music",
-      "toggleMenu": "Toggle navigation menu"
+      "toggleMenu": "Toggle navigation menu",
+      "switchToArabic": "العربية",
+      "switchToEnglish": "English"
     },
     "hero": {
       "title1": "Public debut season 2026",
@@ -128,7 +130,7 @@
           "sub-category": "Select Sub Category",
           "duration": "Select Duration"
         },
-        "before-you-book":"Before You Book!!"
+        "before-you-book": "Before You Book!!"
       },
       "section-3": {
         "head": "Event Details",

@@ -5,6 +5,7 @@ const HomeView = () => import("@/views/HomeView.vue");
 const PricingView = () => import("@/views/PricingView.vue");
 const LoginView = () => import("@/views/LoginView.vue");
 const BookingFormView = () => import("@/views/BookingFormView.vue")
+const NotFoundView = () => import("@/views/NotFoundView.vue");
 
 // Admin Layout
 const DashboardView = () =>
@@ -347,7 +348,8 @@ const router = createRouter({
 
     {
       path: "/:pathMatch(.*)*",
-      redirect: "/",
+      name: "not-found",
+      component: NotFoundView,
     },
   ],
 
@@ -357,6 +359,28 @@ const router = createRouter({
       behavior: "smooth",
     };
   },
+});
+
+// ==========================
+// Global Auth Guard
+// ==========================
+router.beforeEach((to) => {
+  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
+  const requiresAdmin = to.matched.some((record) => record.meta.requiresAdmin);
+
+  if (requiresAuth) {
+    // 👇 Replace with your real auth check (Pinia/Vuex store, etc.)
+    const token = localStorage.getItem("access");
+    const isAuthenticated = !!token;
+
+    if (!isAuthenticated) {
+      // Show 404 instead of redirecting to /login
+      return { name: "not-found" };
+    }
+  }
+
+  // returning true (or nothing) allows navigation to proceed
+  return true;
 });
 
 export default router;
