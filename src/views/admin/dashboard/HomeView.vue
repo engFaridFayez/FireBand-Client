@@ -135,7 +135,7 @@ onMounted(async () => {
           </RouterLink>
 
           <RouterLink
-            to="/admin/subcategories/create"
+            to="/admin/sub-categories/create"
             class="rounded-xl bg-zinc-800 px-5 py-3 text-center transition hover:bg-zinc-700"
           >
             + Add Sub Category

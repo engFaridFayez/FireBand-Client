@@ -53,17 +53,6 @@ async function submit() {
 
     <form @submit.prevent="submit" class="space-y-5">
       <div>
-        <label class="block mb-2 text-white"> Rule </label>
-
-        <textarea
-          v-model="form.text"
-          rows="4"
-          required
-          class="w-full rounded-lg bg-zinc-900 border border-zinc-700 px-4 py-2 text-white"
-        />
-      </div>
-
-      <div>
         <label class="block mb-2 text-white"> Sub Category </label>
 
         <select
@@ -81,6 +70,16 @@ async function submit() {
             {{ subCategory.name }}
           </option>
         </select>
+      </div>
+      <div>
+        <label class="block mb-2 text-white"> Rule </label>
+
+        <textarea
+          v-model="form.text"
+          rows="4"
+          required
+          class="w-full rounded-lg bg-zinc-900 border border-zinc-700 px-4 py-2 text-white"
+        />
       </div>
 
       <div>

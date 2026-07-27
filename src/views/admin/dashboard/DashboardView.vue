@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { RouterLink, RouterView, useRoute } from "vue-router";
 import { ref, watch } from "vue";
+import GalleryIcon from "@/components/Icons/GalleryIcon.vue";
+import ReelsIcon from "@/components/Icons/ReelsIcon.vue";
 
 const route = useRoute();
 const sidebarOpen = ref(false);
@@ -53,12 +55,12 @@ const links = [
   {
     name: "FireBand Gallery",
     path: "/admin/gallery",
-    icon: "👥",
+    icon: GalleryIcon,
   },
   {
     name: "FireBand Reels",
     path: "/admin/reels",
-    icon: "👥",
+    icon: ReelsIcon,
   },
 ];
 
@@ -90,7 +92,9 @@ watch(
       class="fixed inset-y-0 left-0 z-50 w-72 shrink-0 border-r border-zinc-800 bg-zinc-900 transition-transform duration-300 lg:static lg:translate-x-0"
       :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
     >
-      <div class="flex items-center justify-between border-b border-zinc-800 p-6">
+      <div
+        class="flex items-center justify-between border-b border-zinc-800 p-6"
+      >
         <div>
           <h1 class="text-2xl font-bold text-yellow-400">FireBand</h1>
 
@@ -103,7 +107,12 @@ watch(
           aria-label="Close menu"
           @click="closeSidebar"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6"
+            viewBox="0 0 24 24"
+            fill="none"
+          >
             <path
               stroke="currentColor"
               stroke-width="2"
@@ -132,9 +141,17 @@ watch(
                   : 'hover:bg-zinc-800'
           "
         >
-          <span class="text-xl">
-            {{ link.icon }}
-          </span>
+          <div class="flex items-center justify-center w-5 h-5">
+            <component
+              v-if="typeof link.icon !== 'string'"
+              :is="link.icon"
+              class="w-5 h-5"
+            />
+
+            <span v-else class="text-xl leading-none">
+              {{ link.icon }}
+            </span>
+          </div>
 
           <span>
             {{ link.name }}
@@ -156,7 +173,12 @@ watch(
             aria-label="Open menu"
             @click="sidebarOpen = true"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6"
+              viewBox="0 0 24 24"
+              fill="none"
+            >
               <path
                 stroke="currentColor"
                 stroke-width="2"

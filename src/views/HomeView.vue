@@ -843,7 +843,8 @@ h2 {
 .member-card span {
   display: grid;
   place-items: center;
-  width: 64px;
+  width: fit-content;
+  padding: 0 5px 0 5px;
   height: 64px;
   margin-bottom: 10px;
   border-radius: 8px;

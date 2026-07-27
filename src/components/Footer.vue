@@ -39,7 +39,7 @@ const socialLinks = [
   },
   {
     label: "WhatsApp",
-    href: "https://wa.me/201028365789",
+    href: "https://wa.me/201555058789",
     icon: "whatsapp",
   },
 ];
@@ -242,7 +242,7 @@ const socialLinks = [
                 href="tel:+10000000000"
                 class="transition-colors duration-200 hover:text-[#ffb000]"
               >
-                +1 (000) 000-0000
+                +201555058789
               </a>
             </li>
           </ul>

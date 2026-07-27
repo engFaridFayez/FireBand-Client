@@ -107,6 +107,24 @@ async function submit() {
 
     <form @submit.prevent="submit" class="space-y-5">
       <div>
+        <label class="block mb-2 text-white"> Category </label>
+
+        <select
+          v-model="form.category"
+          class="w-full rounded-lg bg-zinc-900 border border-zinc-700 px-4 py-2 text-white"
+        >
+          <option disabled value="">Select Category</option>
+
+          <option
+            v-for="category in categories"
+            :key="category.id"
+            :value="category.id"
+          >
+            {{ category.name }}
+          </option>
+        </select>
+      </div>
+      <div>
         <label class="block mb-2 text-white"> Name </label>
 
         <input
@@ -124,25 +142,6 @@ async function submit() {
           rows="4"
           class="w-full rounded-lg bg-zinc-900 border border-zinc-700 px-4 py-2 text-white"
         />
-      </div>
-
-      <div>
-        <label class="block mb-2 text-white"> Category </label>
-
-        <select
-          v-model="form.category"
-          class="w-full rounded-lg bg-zinc-900 border border-zinc-700 px-4 py-2 text-white"
-        >
-          <option disabled value="">Select Category</option>
-
-          <option
-            v-for="category in categories"
-            :key="category.id"
-            :value="category.id"
-          >
-            {{ category.name }}
-          </option>
-        </select>
       </div>
 
       <div class="grid grid-cols-2 gap-4">

@@ -54,7 +54,7 @@ async function submit() {
 
     await showPopup("success", "Success", "Category created successfully.");
 
-    await router.push("/admin");
+    await router.push("/admin/categories");
   } catch (error) {
     console.error(error);
 

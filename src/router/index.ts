@@ -4,7 +4,7 @@ import { createRouter, createWebHistory } from "vue-router";
 const HomeView = () => import("@/views/HomeView.vue");
 const PricingView = () => import("@/views/PricingView.vue");
 const LoginView = () => import("@/views/LoginView.vue");
-const BookingFormView = () => import("@/views/BookingFormView.vue")
+const BookingFormView = () => import("@/views/BookingFormView.vue");
 const NotFoundView = () => import("@/views/NotFoundView.vue");
 
 // Admin Layout
