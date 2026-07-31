@@ -1,12 +1,16 @@
 import api from "@/services/api";
 import type { GalleryImage } from "@/types/home";
+import type { PaginatedResponse } from "@/types/home";
 
 class GalleryService {
-  async getGalleryImages(subCategoryId?: number) {
-    const { data } = await api.get<GalleryImage[]>("/gallery/", {
-      params: subCategoryId ? { subcategory: subCategoryId } : {},
+  async getGalleryImages(subCategoryId?: number, page = 1, pageSize = 12) {
+    const { data } = await api.get<PaginatedResponse<GalleryImage>>("/gallery/", {
+      params: {
+        ...(subCategoryId ? { subcategory: subCategoryId } : {}),
+        page,
+        page_size: pageSize,
+      },
     });
-
     return data;
   }
 
@@ -17,21 +21,15 @@ class GalleryService {
 
   async createGallery(formData: FormData) {
     const { data } = await api.post("/gallery/bulk/", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
+      headers: { "Content-Type": "multipart/form-data" },
     });
-
     return data;
   }
 
   async updateGallery(id: number, formData: FormData) {
     const { data } = await api.put(`/gallery/${id}/`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
+      headers: { "Content-Type": "multipart/form-data" },
     });
-
     return data;
   }
 

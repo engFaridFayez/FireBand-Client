@@ -160,32 +160,9 @@ onUnmounted(() => {
         >{{ t("home-page.nav.band") }}</a
       >
       <div class="nav-menu" :class="{ 'is-open': musicMenuOpen }">
-        <button
-          class="nav-menu-trigger"
-          type="button"
-          aria-haspopup="true"
-          :aria-expanded="musicMenuOpen"
-          @click="toggleMusicMenu"
-        >
+        <RouterLink :to="{ name: 'portfolio' }" class="nav-link">
           {{ t("home-page.nav.portfolio") }}
-          <span aria-hidden="true">v</span>
-        </button>
-        <div class="nav-dropdown" aria-label="Music event types">
-          <RouterLink
-            v-for="category in categories"
-            :key="category.id"
-            class="dropdown-link"
-            :to="{
-              name: 'portfolio-category',
-              params: {
-                id: category.id,
-              },
-            }"
-            @click="closeMenu"
-          >
-            {{ category.name }}
-          </RouterLink>
-        </div>
+        </RouterLink>
       </div>
       <RouterLink
         class="nav-link nav-primary"

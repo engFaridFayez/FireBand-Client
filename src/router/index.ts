@@ -114,10 +114,9 @@ const router = createRouter({
     },
 
     {
-      path: "/portfolio/:id",
-      name: "portfolio-category",
-      component: () => import("@/views/PortfolioCategory.vue"),
-      props: true,
+      path: "/portfolio",
+      name: "portfolio",
+      component: () => import("@/views/Portfolio.vue"),
     },
     {
       path: "/portfolio/:categoryId/sub/:subId",

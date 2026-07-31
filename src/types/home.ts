@@ -18,7 +18,12 @@ export interface Team {
     image:string;
     order:number;
 }
-
+export interface PaginatedResponse<T> {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: T[];
+}
 export interface GalleryImage {
   id: number;
   sub_category: SubCategory;
@@ -27,6 +32,7 @@ export interface GalleryImage {
   order: number;
   is_active: boolean;
   created_at: string;
+  
 }
 
 export interface Reel {

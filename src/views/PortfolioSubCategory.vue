@@ -2,12 +2,23 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watch, nextTick } from "vue";
 import { useRoute } from "vue-router";
-import GalleryImageService from "@/services/gallery.service";
 import ReelService from "@/services/reel.service";
-import type { GalleryImage } from "@/types/home";
 import type { Reel } from "@/types/home";
 import { useRouter } from "vue-router";
+import { useCategoryStore } from "@/stores/category";
+import { storeToRefs } from "pinia";
+import { useGalleryStore } from "@/stores/gallery";
 
+const galleryStore = useGalleryStore();
+const {
+  galleryImages: images,
+  page,
+  totalPages,
+  hasNext,
+  hasPrevious,
+} = storeToRefs(galleryStore);
+const categoryStore = useCategoryStore();
+const { selectedSubCategory } = storeToRefs(categoryStore);
 const router = useRouter();
 
 function goHome() {
@@ -16,8 +27,6 @@ function goHome() {
 
 const props = defineProps<{ subId: string }>();
 const route = useRoute();
-
-const images = ref<GalleryImage[]>([]);
 const reels = ref<Reel[]>([]);
 const loading = ref(false);
 const error = ref<string | null>(null);
@@ -216,12 +225,11 @@ const load = async (subId: string) => {
   error.value = null;
 
   try {
-    const [imgData, reelData] = await Promise.all([
-      GalleryImageService.getGalleryImages(Number(subId)),
-      ReelService.getReels(Number(subId)),
+    await Promise.all([
+      galleryStore.fetchGalleryImages(Number(subId), 1),
+      ReelService.getReels(Number(subId)).then((r) => (reels.value = r)),
+      categoryStore.fetchSubCategory(Number(subId)),
     ]);
-    images.value = imgData;
-    reels.value = reelData;
     reelItemEls.value = [];
   } catch (err: any) {
     error.value = err.response?.data?.detail || err.message;
@@ -230,6 +238,14 @@ const load = async (subId: string) => {
   }
 };
 
+function goToPage(p: number) {
+  if (p < 1 || p > totalPages.value) return;
+  galleryStore.fetchGalleryImages(Number(props.subId), p);
+  // scroll gallery back into view on page change
+  document
+    .querySelector(".gallery-grid")
+    ?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
 onMounted(() => load(props.subId));
 
 watch(
@@ -279,6 +295,14 @@ watch(
 
           Back to Home
         </button>
+        <header class="subcategory-intro" v-if="selectedSubCategory">
+          <span class="eyebrow">Portfolio</span>
+          <h1>{{ selectedSubCategory.name }}</h1>
+          <p v-if="selectedSubCategory.description" class="subcategory-desc">
+            {{ selectedSubCategory.description }}
+          </p>
+        </header>
+
         <header class="section-heading">
           <span class="eyebrow">Portfolio</span>
           <h1>Gallery</h1>
@@ -301,6 +325,28 @@ watch(
         <div v-else class="state-card">
           <p>No images yet.</p>
         </div>
+
+        <nav
+          v-if="totalPages > 1"
+          class="pagination"
+          aria-label="Gallery pages"
+        >
+          <button
+            type="button"
+            :disabled="!hasPrevious"
+            @click="goToPage(page - 1)"
+          >
+            ‹
+          </button>
+          <span class="pagination-status">{{ page }} / {{ totalPages }}</span>
+          <button
+            type="button"
+            :disabled="!hasNext"
+            @click="goToPage(page + 1)"
+          >
+            ›
+          </button>
+        </nav>
 
         <!-- Reels -->
         <header class="section-heading reels-heading">
@@ -450,6 +496,17 @@ watch(
   min-height: 100vh;
 }
 
+.subcategory-intro {
+  margin-bottom: clamp(2rem, 4vw, 3rem);
+}
+.subcategory-desc {
+  margin: 0.75rem 0 0;
+  max-width: 65ch;
+  color: #b8b4ab;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
 .portfolio-subcategory-inner {
   max-width: 1200px;
   margin: 0 auto;
@@ -482,28 +539,21 @@ watch(
 
 /* ---------- Gallery ---------- */
 .gallery-grid {
-  display: flex;
-  overflow-x: auto;
-  overflow-y: hidden;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-  gap: 1rem;
-  padding-bottom: 0.5rem;
-  scrollbar-width: thin;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.25rem;
 }
 
 .gallery-tile {
   position: relative;
-  flex: 0 0 auto;
-  width: clamp(220px, 22vw, 320px);
   aspect-ratio: 1 / 1;
+  width: 100%;
   border-radius: 12px;
   overflow: hidden;
   border: none;
   padding: 0;
   cursor: pointer;
   background: #1a1a1c;
-  scroll-snap-align: start;
 }
 
 .gallery-tile img {
@@ -539,16 +589,47 @@ watch(
   opacity: 1;
 }
 
-/* Mobile: narrower tiles, captions always visible (no hover on touch) */
+/* Mobile: captions always visible (no hover on touch) */
 @media (max-width: 640px) {
-  .gallery-tile {
-    width: 72vw;
-    max-width: 300px;
-  }
-
   .gallery-tile-caption {
     opacity: 1;
   }
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+}
+
+.pagination button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid #333335;
+  background: none;
+  color: #f5f2ec;
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.pagination button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.pagination button:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.pagination-status {
+  color: #b8b4ab;
+  font-size: 0.9rem;
+  min-width: 3.5rem;
+  text-align: center;
 }
 
 /* ---------- Reel thumbnails ---------- */

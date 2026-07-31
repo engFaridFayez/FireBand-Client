@@ -150,37 +150,35 @@ onBeforeUnmount(() => {
     </section>
 
     <section
-      class="section-panel music-panel reveal reveal-left"
+      class="gallery-section reveal reveal-up"
       id="music"
       aria-labelledby="music-title"
     >
-      <div>
-        <p class="eyebrow">
-          {{ t("home-page.music.title") }}
+      <div class="section-heading">
+        <p class="eyebrow">Our Gallery</p>
+
+        <h2 id="music-title">Moments That Tell Our Story</h2>
+
+        <p class="section-description">
+          Every performance is filled with unforgettable moments, emotions, and
+          memories shared with our audience.
         </p>
-
-        <h2 id="music-title">
-          {{ t("home-page.music.content") }}
-        </h2>
       </div>
-      <div class="track-list">
-        <article class="reveal-card reveal-left" style="--reveal-delay: 80ms">
-          <span>01</span>
-          <strong>{{ t("home-page.music.sections.1.title") }}</strong>
-          <small>{{ t("home-page.music.sections.1.content") }}</small>
-        </article>
 
-        <article class="reveal-card reveal-left" style="--reveal-delay: 180ms">
-          <span>02</span>
-          <strong>{{ t("home-page.music.sections.2.title") }}</strong>
-          <small>{{ t("home-page.music.sections.2.content") }}</small>
+      <div class="gallery-grid">
+        <article
+          v-for="(image, index) in galleryImages.slice(0, 6)"
+          :key="index"
+          class="gallery-item"
+        >
+          <img :src="image" :alt="`Gallery ${index + 1}`" />
         </article>
+      </div>
 
-        <article class="reveal-card reveal-left" style="--reveal-delay: 280ms">
-          <span>03</span>
-          <strong>{{ t("home-page.music.sections.3.title") }}</strong>
-          <small>{{ t("home-page.music.sections.3.content") }}</small>
-        </article>
+      <div class="gallery-actions">
+        <RouterLink :to="{ name: 'portfolio' }" class="primary-action">
+          View Full Gallery →
+        </RouterLink>
       </div>
     </section>
 
@@ -286,7 +284,67 @@ h1:lang(ar) {
   padding-bottom: 0.08em;
   white-space: normal; /* allow wrap if the Arabic string is longer/shorter than English */
 }
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
 
+.gallery-item {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  box-shadow: var(--shadow-soft);
+  aspect-ratio: 4 / 3;
+  cursor: pointer;
+  transition: transform .3s ease;
+}
+
+.gallery-item:hover {
+  transform: translateY(-6px);
+}
+
+.gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .45s ease;
+}
+
+.gallery-item:hover img {
+  transform: scale(1.08);
+}
+
+.gallery-item::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0,0,0,.35),
+    transparent 55%
+  );
+}
+
+.gallery-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+.gallery-section {
+  margin-top: 100px;
+  display: grid;
+  gap: 2rem;
+}
+
+.section-description {
+  max-width: 650px;
+  margin-top: 1rem;
+  color: var(--text-muted);
+  line-height: 1.8;
+}
 /* Also apply to h2 if you reuse it for Arabic headings */
 h2:lang(ar) {
   line-height: 1.3;
@@ -398,6 +456,7 @@ h2:lang(ar) {
 .about-section,
 .section-panel,
 .show-grid,
+.gallery-section,
 .team-section,
 .booking-band {
   position: relative;
@@ -683,6 +742,7 @@ h2 {
   border-radius: 8px;
   background: color-mix(in srgb, var(--surface) 78%, transparent);
   box-shadow: var(--shadow-soft);
+  margin-bottom: 25px;
 }
 
 .about-image {
@@ -945,6 +1005,9 @@ h2 {
   .member-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+  .gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 
   .show-grid {
     margin-top: 48px;
@@ -958,8 +1021,12 @@ h2 {
   .section-panel,
   .show-grid,
   .team-section,
+  .gallery-section,
   .booking-band {
     width: min(100% - 16px, 1180px);
+  }
+  .gallery-grid {
+    grid-template-columns: 1fr;
   }
 
   .hero-section {
