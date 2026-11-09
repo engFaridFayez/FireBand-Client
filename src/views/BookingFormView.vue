@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { reactive, ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
-
+import EmailService from "@/services/email.service";
 import { useBookingStore } from "@/stores/booking";
 import { useCategoryStore } from "@/stores/category";
 import { showPopup } from "@/lib/swal";
@@ -107,6 +107,22 @@ const overallProgress = computed(() => {
 async function submitBooking() {
   try {
     await bookingStore.createBooking(form);
+
+    // Email notification is independent of booking creation
+    try {
+      const emailData = {
+  ...form,
+  category:
+    categories.value.find((item) => item.id === form.category)?.name ?? "-",
+  sub_category: selectedSubCategory.value?.name ?? "-",
+  duration:
+    durations.value.find((item) => item.id === form.duration)?.title ?? "-",
+};
+
+await EmailService.sendBookingEmail(emailData);
+    } catch (emailError) {
+      console.error("EmailJS notification failed:", emailError);
+    }
 
     submitted.value = true;
 
