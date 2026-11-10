@@ -34,7 +34,6 @@ async function loadSubCategory() {
   form.category = String(selectedSubCategory.value.category);
   form.min_members = selectedSubCategory.value.min_members;
   form.max_members = selectedSubCategory.value.max_members;
-  console.log(selectedSubCategory.value?.is_custom);
   form.is_custom = selectedSubCategory.value.is_custom;
 }
 
@@ -105,7 +104,6 @@ async function submit() {
     if (form.image) {
       data.append("image", form.image);
     }
-    console.log(form);
 
     await categoryStore.updateSubCategory(Number(route.params.id), data);
 

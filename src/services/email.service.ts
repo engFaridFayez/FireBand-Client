@@ -40,11 +40,6 @@ const EmailService = {
             { publicKey: PUBLIC_KEY },
         );
 
-        console.log("EmailJS Response:", {
-            status: response.status,
-            text: response.text,
-        });
-
         return response;
     },
 };
