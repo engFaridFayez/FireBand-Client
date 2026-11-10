@@ -1,13 +1,13 @@
 <script lang="ts" setup>
-import { onBeforeUnmount, onMounted, ref } from "vue";
+import { nextTick, onBeforeUnmount, onMounted, onUnmounted, ref } from "vue";
 import NavBar from "@/components/NavBar.vue";
-import image1 from "@/assets/images/image1.jpg";
-import image2 from "@/assets/images/image2.jpg";
-import image3 from "@/assets/images/image3.jpg";
-import image4 from "@/assets/images/image4.jpg";
-import image5 from "@/assets/images/image5.jpg";
-import image6 from "@/assets/images/image6.jpg";
-import image7 from "@/assets/images/image7.jpg";
+import image1 from "@/assets/images/image1.webp";
+import image2 from "@/assets/images/image2.webp";
+import image3 from "@/assets/images/image3.webp";
+import image4 from "@/assets/images/image4.webp";
+import image5 from "@/assets/images/image5.webp";
+import image6 from "@/assets/images/image6.webp";
+import image7 from "@/assets/images/image7.webp";
 import { useAudioStore } from "@/stores/audio";
 import { useHomeStore } from "@/stores/home";
 import { storeToRefs } from "pinia";
@@ -28,8 +28,27 @@ const revealDelay = (index: number) => ({
   "--reveal-delay": `${index * 120}ms`,
 });
 
-onMounted(async () => {
-  await Promise.all([homeStore.getAllShows(), homeStore.getAllTeam()]);
+const observeRevealElements = () => {
+  document.querySelectorAll(".reveal, .reveal-card").forEach((element) => {
+    if (!element.classList.contains("is-visible")) {
+      revealObserver?.observe(element);
+    }
+  });
+};
+
+const fetchAndObserve = async (request: () => Promise<unknown>) => {
+  try {
+    await request();
+  } catch (error) {
+    console.error("Failed to load home data:", error);
+  } finally {
+    await nextTick();
+    observeRevealElements();
+  }
+};
+
+onMounted(() => {
+  // 1. Initialize observer immediately
   revealObserver = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
@@ -42,9 +61,17 @@ onMounted(async () => {
     { threshold: 0.18 },
   );
 
-  document
-    .querySelectorAll(".reveal, .reveal-card")
-    .forEach((element) => revealObserver?.observe(element));
+  // 2. Show existing elements immediately
+  observeRevealElements();
+
+  // 3. Fetch data independently
+  void fetchAndObserve(() => homeStore.getAllShows());
+  void fetchAndObserve(() => homeStore.getAllTeam());
+});
+
+onUnmounted(() => {
+  revealObserver?.disconnect();
+  revealObserver = null;
 });
 
 onBeforeUnmount(() => {
@@ -118,9 +145,17 @@ onBeforeUnmount(() => {
           v-for="(image, index) in galleryImages"
           :key="image"
           class="gallery-card"
-          :style="{ animationDelay: `${index === 0 ? 0 : -(12 - index * 2)}s` }"
+          :style="{
+            animationDelay: `${index === 0 ? 0 : -(12 - index * 2)}s`,
+          }"
         >
-          <img :src="image" :alt="`Fireband performance photo ${index + 1}`" />
+          <img
+            :src="image"
+            :alt="`Fireband performance photo ${index + 1}`"
+            loading="eager"
+            :fetchpriority="index === 0 ? 'high' : 'auto'"
+            decoding="async"
+          />
         </div>
       </figure>
     </section>
@@ -168,10 +203,16 @@ onBeforeUnmount(() => {
       <div class="gallery-grid">
         <article
           v-for="(image, index) in galleryImages.slice(0, 6)"
-          :key="index"
+          :key="image"
           class="gallery-item"
         >
-          <img :src="image" :alt="`Gallery ${index + 1}`" />
+          <img
+            :src="image"
+            :alt="`Fireband Gallery ${index + 1}`"
+            loading="lazy"
+            decoding="async"
+            fetchpriority="low"
+          />
         </article>
       </div>
 
@@ -299,7 +340,7 @@ h1:lang(ar) {
   box-shadow: var(--shadow-soft);
   aspect-ratio: 4 / 3;
   cursor: pointer;
-  transition: transform .3s ease;
+  transition: transform 0.3s ease;
 }
 
 .gallery-item:hover {
@@ -310,7 +351,7 @@ h1:lang(ar) {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform .45s ease;
+  transition: transform 0.45s ease;
 }
 
 .gallery-item:hover img {
@@ -321,11 +362,7 @@ h1:lang(ar) {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    to top,
-    rgba(0,0,0,.35),
-    transparent 55%
-  );
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.35), transparent 55%);
 }
 
 .gallery-actions {
@@ -1265,4 +1302,23 @@ h2 {
     transition-duration: 1ms !important;
   }
 }
+
+
+@media (max-width: 620px) {
+  .hero-section {
+    gap: 24px;
+    animation: none;
+  }
+
+  .hero-copy,
+  .hero-gallery,
+  h1 {
+    animation: none;
+  }
+
+  .spark-field span:nth-child(n + 13) {
+    display: none;
+  }
+}
+
 </style>

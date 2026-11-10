@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { RouterLink, useRoute } from "vue-router";
-import logo from "@/assets/images/logo.png";
+import logo from "@/assets/images/logo.webp";
 import { storeToRefs } from "pinia";
 import { useAuthStore } from "@/stores/auth";
 import { useRouter } from "vue-router";
@@ -757,7 +757,7 @@ onUnmounted(() => {
   }
 
   .theme-toggle span:last-child {
-    display: none;
+    display: block;
   }
 
   .theme-toggle {

@@ -35,7 +35,7 @@ onMounted(() => {
     ref="audioRef"
     :src="harlem"
     loop
-    preload="auto"
+    preload="none"
   ></audio>
 
   <RouterView />
