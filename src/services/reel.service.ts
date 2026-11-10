@@ -38,6 +38,13 @@ class ReelService {
   async deleteReel(id: number) {
     await api.delete(`/reels/${id}/`);
   }
+  async getReelBySlug(slug: string) {
+    const { data } = await api.get<Reel>(
+      `/reels/by-slug/${encodeURIComponent(slug)}/`
+    );
+
+    return data;
+  }
 }
 
 export default new ReelService();

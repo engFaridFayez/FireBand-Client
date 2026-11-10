@@ -49,5 +49,25 @@ export const useReelStore = defineStore("reel", {
         (item) => item.id !== id
       );
     },
+    async fetchReelBySlug(slug: string) {
+      this.loading = true;
+      this.error = null;
+      this.selectedReel = null;
+
+      try {
+        this.selectedReel =
+          await reelService.getReelBySlug(slug);
+
+      } catch (error: any) {
+        if (error.response?.status === 404) {
+          this.error = "الأغنية غير موجودة";
+        } else {
+          this.error = "حدث خطأ أثناء تحميل الأغنية";
+        }
+
+      } finally {
+        this.loading = false;
+      }
+    },
   },
 });

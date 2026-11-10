@@ -38,7 +38,12 @@ export interface GalleryImage {
 export interface Reel {
   id: number;
   sub_category: SubCategory;
+
   title: string;
+  slug: string;
+  description: string;
+  artist: string;
+
   thumbnail: string | null;
   platform: "youtube" | "facebook";
   platform_display: string;

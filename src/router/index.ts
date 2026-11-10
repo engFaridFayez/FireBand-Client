@@ -124,6 +124,12 @@ const router = createRouter({
       component: () => import("@/views/PortfolioSubCategory.vue"),
       props: true,
     },
+    {
+      path: "/videos/:slug",
+      name: "reel-details",
+      component: () => import("@/views/ReelDetailsView.vue"),
+      props: true,
+    },
 
     // ==========================
     // Admin Routes
