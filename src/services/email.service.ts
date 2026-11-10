@@ -20,7 +20,7 @@ const EmailService = {
         custom_sub_category: string;
         notes: string;
     }) {
-        return emailjs.send(
+        const response = await emailjs.send(
             SERVICE_ID,
             TEMPLATE_ID,
             {
@@ -39,7 +39,14 @@ const EmailService = {
             },
             { publicKey: PUBLIC_KEY },
         );
-    }
+
+        console.log("EmailJS Response:", {
+            status: response.status,
+            text: response.text,
+        });
+
+        return response;
+    },
 };
 
 export default EmailService;
